@@ -1,0 +1,166 @@
+.trendingSection {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionHeader h2 {
+  font-size: 2.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.sliderContainer {
+  position: relative;
+  padding: 0 40px;
+}
+
+.dealSlider {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 1rem 0;
+}
+
+.dealSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.dealCard {
+  min-width: 300px;
+  background: rgb(244, 245, 246);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.dealCard:hover {
+  transform: translateY(-5px);
+}
+
+.dealImage {
+  position: relative;
+  height: 160px;
+}
+
+.dealImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.savings {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #ff4757;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.dealInfo {
+  padding: 1.5rem;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.planeIcon {
+  color: #007bff;
+}
+
+.route h3 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.price {
+  font-size: 1.8rem;
+  color: #2ecc71;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.grabButton {
+  display: block;
+  width: 90%;
+  padding: 0.8rem;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.grabButton:hover {
+  background: #0056b3;
+}
+
+.scrollButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
+.scrollLeft {
+  left: 0;
+}
+
+.scrollRight {
+  right: 0;
+}
+
+.scrollButton:hover {
+  background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .trendingSection {
+    padding: 2rem 1rem;
+  }
+
+  .dealCard {
+    min-width: 260px;
+  }
+}

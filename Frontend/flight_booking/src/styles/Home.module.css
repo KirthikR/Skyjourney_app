@@ -1,0 +1,464 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove .authButton styles as they're no longer needed */
+
+.hero {
+  width: 100%;
+  min-height: 60vh; /* Changed from height to min-height */
+  margin-top: 2200px; /* Added margin-top for navbar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem; /* Increased padding */
+  position: relative; /* Added position */
+  z-index: 1; /* Added z-index */
+}
+
+.title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: #060606;
+  margin: 0 0 2rem 0; /* Increased margin */
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: #363434;
+  margin: 0 0 4rem 0; /* Increased margin */
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.ctaButton {
+  padding: 1.4rem 4rem; /* Increased padding */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.3rem; /* Increased font size */
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgb(253, 254, 254);
+  margin-bottom: 2rem; /* Added margin-bottom */
+}
+
+/* Update features section */
+.features {
+  width: 100%;
+  padding: 4rem 2rem;
+  margin: 0;
+  background: #a7c6e5;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+.featuresIntro {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+}
+
+.featuresIntro h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.featuresIntro p {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+.featureCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0 1rem;
+  margin-top: 2rem;
+}
+
+.featureCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+}
+
+.featureCard h3 {
+  font-size: 1.4rem;
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+
+.featureCard p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Update FAQ section */
+.faqSection {
+  width: 100%;
+  max-width: 800px; /* Reduced max-width */
+  padding: 3rem 2rem;
+  margin: 0 auto; /* Center align */
+  box-sizing: border-box;
+}
+
+.faqSection h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: left; /* Align left */
+}
+
+.faqContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Reduced gap */
+}
+
+.faqItem {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px; /* Reduced border radius */
+  overflow: hidden;
+  background: rgb(228, 133, 70);
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.faqQuestion {
+  width: 100%;
+  padding: 1rem 1.5rem; /* Reduced padding */
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 1rem; /* Reduced font size */
+  font-weight: 500;
+  color: #0c0c0c;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.faqQuestion:hover {
+  background: #f8f9fa;
+}
+
+.faqQuestion.active {
+  background: #f0f7ff;
+  color: #007bff;
+}
+
+.arrow {
+  font-size: 1.2rem; /* Reduced size */
+  color: #060606;
+  margin-left: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1.5rem;
+  color: #181717;
+  line-height: 1.5;
+  font-size: 0.95rem; /* Reduced font size */
+  transition: all 0.3s ease;
+}
+
+.faqAnswer.show {
+  max-height: 300px; /* Reduced max height */
+  padding: 0 1.5rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .hero {
+    min-height: 100vh;
+    margin-top: 64px; /* Adjusted for mobile navbar */
+    padding: 4rem 1rem;
+  }
+
+  .title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 1.5rem 0;
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    margin: 0 0 3rem 0;
+  }
+
+  .ctaButton {
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+  }
+
+  .features,
+  .faqSection {
+    padding: 3rem 1rem;
+  }
+
+  .featuresIntro h2 {
+    font-size: 1.5rem;
+  }
+
+  .featureCards {
+    grid-template-columns: 1fr;
+    padding: 0 0.5rem;
+  }
+
+  .featureCard {
+    padding: 1rem;
+  }
+
+  .faqSection {
+    padding: 2rem 1rem;
+    max-width: 100%;
+  }
+
+  .faqSection h2 {
+    font-size: 1.5rem;
+  }
+
+  .faqQuestion {
+    padding: 0.875rem 1rem;
+  }
+
+  .faqAnswer.show {
+    padding: 0 1rem 0.875rem;
+  }
+}
+
+/* Update the footer styles */
+.footer {
+  background: #0a0a0a;
+  color: #fff;
+  padding: 2rem 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid #e0e0e0;
+  margin-left: calc(-50vw + 50%); /* Center and extend full width */
+  margin-right: calc(-50vw + 50%);
+  position: relative;
+}
+
+.footerGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.footerSection h4 {
+  color: #ccc;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.footerSection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerSection ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footerSection ul li a {
+  color: #999;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footerSection ul li a:hover {
+  color: #fff;
+}
+
+/* Keep existing social links base styling */
+.socialLinks {
+  border-top: 1px solid #444;
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.socialLinks a {
+  margin: 0 0.5rem;
+  font-size: 1.8rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.socialLinks a:hover {
+  transform: scale(1.1);
+}
+
+/* Add brand colors for each social media platform */
+.youtube {
+  color: #FF0000 !important; /* YouTube Red */
+}
+
+.facebook {
+  color: #1877F2 !important; /* Facebook Blue */
+}
+
+.twitter {
+  color: #1DA1F2 !important; /* Twitter Blue */
+}
+
+/* More robust fix for Instagram gradient */
+.instagram {
+  position: relative;
+  display: inline-block;
+}
+
+.instagram svg {
+  fill: url(#instagram-gradient) #E1306C;
+}
+
+/* Add this SVG to your component that uses Instagram icon */
+
+.linkedin {
+  color: #0A66C2 !important; /* LinkedIn Blue */
+}
+
+.pinterest {
+  color: #E60023 !important; /* Pinterest Red */
+}
+
+.tiktok {
+  color: #000000 !important; /* TikTok */
+}
+
+.snapchat {
+  color: #FFFC00 !important; /* Snapchat Yellow */
+}
+
+.telegram {
+  color: #26A5E4 !important; /* Telegram Blue */
+}
+
+.whatsapp {
+  color: #25D366 !important; /* WhatsApp Green */
+}
+
+.bookButton {
+  position: relative;
+  background: linear-gradient(135deg, #3a86ff 0%, #00c6ff 100%);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(58, 134, 255, 0.4);
+  overflow: hidden;
+  z-index: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2rem;
+}
+
+.bookButton:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #00c6ff 0%, #3a86ff 100%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.5s ease;
+}
+
+.bookButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(58, 134, 255, 0.5);
+}
+
+.bookButton:hover:before {
+  opacity: 1;
+}
+
+.bookButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(58, 134, 255, 0.4);
+}
+
+/* Add a pulse animation for extra attention */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(58, 134, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0);
+  }
+}
+
+.hero:hover .bookButton {
+  animation: pulse 2s infinite;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 1rem;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+  }
+
+  .footerGrid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footerSection h4 {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 980px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+}

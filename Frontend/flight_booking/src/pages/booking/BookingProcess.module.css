@@ -1,0 +1,33 @@
+.bookingProcess {
+  padding: 2rem 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bookingContent {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.leftColumn {
+  flex: 3;
+}
+
+.rightColumn {
+  flex: 1;
+  min-width: 300px;
+}
+
+@media (max-width: 900px) {
+  .bookingContent {
+    flex-direction: column;
+  }
+  
+  .rightColumn {
+    order: -1;
+  }
+}

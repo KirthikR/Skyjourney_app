@@ -1,0 +1,169 @@
+css
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.section h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.passengerType {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.typeInfo h4 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.typeInfo p {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0.2rem 0 0;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.counter button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #007bff;
+  background: white;
+  color: #007bff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.counter button:disabled {
+  border-color: #ddd;
+  color: #ddd;
+  cursor: not-allowed;
+}
+
+.counter button:not(:disabled):hover {
+  background: #007bff;
+  color: white;
+}
+
+.counter span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cabinClasses {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cabinOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cabinOption:hover {
+  border-color: #007bff;
+  background: #f8f9fa;
+}
+
+.cabinOption.active {
+  border-color: #007bff;
+  background: #f0f7ff;
+}
+
+.cabinInfo h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.cabinInfo p {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.radioButton {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #007bff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioButton .inner {
+  width: 10px;
+  height: 10px;
+  background: #007bff;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cabinOption.active .radioButton .inner {
+  opacity: 1;
+}
+
+.doneButton {
+  width: 100%;
+  padding: 0.8rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.doneButton:hover {
+  background: #0056b3;
+}

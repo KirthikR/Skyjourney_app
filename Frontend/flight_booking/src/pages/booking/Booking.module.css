@@ -1,0 +1,1142 @@
+:root {
+  --primary-color: #3a86ff;
+  --primary-dark: #2970e6;
+  --primary-light: #63a1ff;
+  --accent-color: #ff9e00;
+  --accent-dark: #e88f00;
+  --accent-light: #ffb84d;
+  --success-color: #4CAF50;
+  --error-color: #f44336;
+  --text-color: #2d3748;
+  --text-light: #718096;
+  --text-lightest: #a0aec0;
+  --border-color: #e2e8f0;
+  --background-light: #f8fafc;
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --radius-small: 8px;
+  --radius-normal: 12px;
+  --radius-large: 20px;
+}
+
+/* ===== HERO BACKGROUND SECTION ===== */
+.bookingHero {
+  min-height: 100vh;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  transition: background-image 1.5s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* Add overlay for better text contrast */
+.bookingHero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(13, 23, 42, 0.7) 0%,
+    rgba(13, 23, 42, 0.5) 30%,
+    rgba(13, 23, 42, 0.7) 100%
+  );
+  z-index: 1;
+}
+
+/* Hero content styling */
+.heroContent {
+  text-align: center;
+  color: white;
+  position: relative;
+  z-index: 3;
+  margin-bottom: 2.5rem;
+  animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  max-width: 700px;
+  margin: 0 auto;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
+}
+
+/* ===== SEARCH CONTAINER ===== */
+.searchContainer {
+  width: 100%;
+  max-width: 1000px;
+  position: relative;
+  z-index: 10;
+  animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: var(--radius-large);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  overflow: hidden;
+  transition: box-shadow 0.4s ease;
+}
+
+.searchContainer:hover {
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Trip type selector */
+.tripTypeSelector {
+  display: flex;
+  width: 100%;
+  background-color: #f0f4f9;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tripTypeButton {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  padding: 1.25rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tripTypeButton:hover {
+  color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.activeTrip {
+  color: var(--primary-color);
+  font-weight: 600;
+  background: white;
+}
+
+.activeTrip::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 3px 3px 0 0;
+}
+
+.tripIcon {
+  font-size: 1.1rem;
+}
+
+/* Form layout */
+.searchForm {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mainSearchGrid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1.5rem;
+}
+
+.locationSection {
+  display: flex;
+  position: relative;
+  gap: 1rem;
+}
+
+.dateSection {
+  display: flex;
+  gap: 1rem;
+}
+
+.optionsSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Form fields */
+.formField {
+  flex: 1;
+  position: relative;
+}
+
+.formField label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input styling */
+.inputWithIcon {
+  position: relative;
+}
+
+.inputWithIcon input,
+.cabinSelect {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px 0 48px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-normal);
+  font-size: 1rem;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.inputWithIcon input:focus,
+.cabinSelect:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(58, 134, 255, 0.15);
+  outline: none;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+/* Swap button */
+.swapButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
+  z-index: 5;
+}
+
+.swapButton:hover {
+  transform: translate(-50%, 0) rotate(180deg);
+  box-shadow: 0 6px 16px rgba(58, 134, 255, 0.5);
+}
+
+/* Passenger selector */
+.passengerSelector {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px 0 48px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-normal);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.passengerInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.passengerCount {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.passengerBreakdown {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.dropdownIcon {
+  color: var(--primary-color);
+}
+
+.passengerDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 300px;
+  background: white;
+  border-radius: var(--radius-normal);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  z-index: 50;
+  animation: fadeInDown 0.3s ease;
+}
+
+.passengerType {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.passengerType:last-of-type {
+  border-bottom: none;
+}
+
+.passengerTypeInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.passengerTypeTitle {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.passengerTypeSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.passengerControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.passengerButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.passengerButton:not(:disabled):hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.passengerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Cabin class selector */
+.cabinClassSelector {
+  position: relative;
+}
+
+.cabinSelect {
+  appearance: none;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.selectArrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  pointer-events: none;
+}
+
+/* Search button */
+.searchButtonContainer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.searchButton {
+  min-width: 200px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius-normal);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  box-shadow: 0 10px 20px rgba(58, 134, 255, 0.3);
+}
+
+.searchButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 25px rgba(58, 134, 255, 0.4);
+}
+
+/* Premium features */
+.premiumFeatures {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  z-index: 5;
+  position: relative;
+}
+
+.featureBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-weight: 500;
+  padding: 0.85rem 1.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 60px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.featureBadge:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.featureIcon {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 8px rgba(255, 158, 0, 0.5));
+}
+
+/* FORM FIELDS - LUXURY UPGRADE */
+.formField label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.formField:hover label {
+  color: var(--primary-dark);
+}
+
+/* INPUTS - LUXURY UPGRADE */
+.inputWithIcon input,
+.passengerSelector,
+.cabinSelect {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px 0 48px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-normal);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.inputWithIcon input:focus,
+.passengerSelector:focus,
+.cabinSelect:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(58, 134, 255, 0.15);
+  outline: none;
+}
+
+.inputWithIcon:hover input,
+.passengerSelector:hover,
+.cabinClassSelector:hover .cabinSelect {
+  border-color: var(--primary-light);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.inputWithIcon:hover .inputIcon,
+.passengerSelector:hover .inputIcon,
+.cabinClassSelector:hover .inputIcon {
+  color: var(--primary-dark);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* CALENDAR - LUXURY UPGRADE */
+.calendarDropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 0;
+  width: 320px;
+  background: white;
+  border-radius: var(--radius-normal);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  z-index: 50;
+  animation: fadeInDown 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.calendarNav {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--primary-color);
+}
+
+.calendarNav:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.selectedDay {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  font-weight: 600;
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(58, 134, 255, 0.25);
+}
+
+/* Add these advanced animations and new features */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Use this class for background cycling - place in component */
+.fadeOut {
+  opacity: 0.2;
+}
+
+/* Keep existing responsive styles from your current CSS */
+/* ... (responsive styles remain the same) ... */
+
+/* Add these 10 background image URLs to your component:
+
+const backgroundImages = [
+  'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070', // Santorini
+  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070', // Airplane wing
+  'https://images.unsplash.com/photo-1530521954074-e64f6810b32d?q=80&w=2070', // Dubai skyline
+  'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070', // Mountains
+  'https://images.unsplash.com/photo-1534430480872-3498386e7856?q=80&w=2070', // Beach sunset
+  'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?q=80&w=2070', // Tokyo
+  'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?q=80&w=2070', // Safari
+  'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=2070', // Venice
+  'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070', // New York
+  'https://images.unsplash.com/photo-1508672019048-805c876b67e2?q=80&w=2070', // Bora Bora
+];
+
+/* ENHANCED HORIZONTAL FORM LAYOUT - LUXURY EDITION */
+
+/* Fix the import issue in Booking.jsx first: Change from "../styles/Booking.module.css" to "./Booking.module.css" */
+
+/* Main form container with horizontal layout */
+.horizontalForm {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1.5rem;
+  padding: 2rem;
+  background: white;
+  position: relative;
+}
+
+/* Main search section with horizontal layout */
+.mainSearch {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+/* Location section with from/to fields */
+.locationSection {
+  display: flex;
+  position: relative;
+  gap: 1rem;
+}
+
+.locationSection .formField {
+  flex: 1;
+}
+
+/* Date section with date pickers */
+.dateSection {
+  display: flex;
+  gap: 1rem;
+}
+
+.dateSection .formField {
+  flex: 1;
+}
+
+/* Options section with travelers and cabin class */
+.optionsSection {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  align-items: start;
+  gap: 1.5rem;
+}
+
+/* Container for passenger and cabin selectors */
+.passengerAndCabinContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Improve passenger selector layout */
+.passengerSelector {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.passengerInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.passengerCount {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.passengerBreakdown {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+/* Search button container */
+.searchButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Premium horizontal booking container */
+.horizontalBookingContainer {
+  position: relative;
+  background: white;
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  box-shadow: 
+    0 15px 50px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Better styling for the custom checkbox */
+.formField.checkboxField {
+  margin-top: 2rem;
+  align-self: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.customCheckbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.customCheckbox::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.checkboxLabel:hover .customCheckbox {
+  border-color: var(--primary-light);
+  transform: scale(1.05);
+}
+
+input[type="checkbox"]:checked + .customCheckbox {
+  border-color: var(--primary-color);
+}
+
+input[type="checkbox"]:checked + .customCheckbox::before {
+  opacity: 1;
+}
+
+.checkIcon {
+  color: white;
+  position: relative;
+  z-index: 2;
+  font-size: 0.9rem;
+}
+
+/* Enhanced positioning for dropdown elements */
+.inputWithIcon {
+  position: relative;
+  width: 100%;
+}
+
+/* Better positioning for airport autocomplete dropdown */
+.autocompleteDropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  border-radius: var(--radius-normal);
+  box-shadow: 
+    0 20px 30px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  padding: 0.5rem;
+  animation: fadeInDown 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.autocompleteItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: var(--radius-small);
+  transition: all 0.2s ease;
+}
+
+.autocompleteItem:hover {
+  background: rgba(58, 134, 255, 0.05);
+}
+
+.airportCode {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-right: 1rem;
+  min-width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(58, 134, 255, 0.1);
+  border-radius: var(--radius-normal);
+}
+
+.airportDetails {
+  flex: 1;
+}
+
+.airportName {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.airportCity {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* Passenger dropdown styling with better positioning */
+.passengerDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 300px;
+  background: white;
+  border-radius: var(--radius-normal);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  padding: 1.5rem;
+  animation: fadeInDown 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.passengerType {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.passengerType:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.passengerTypeInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.passengerTypeTitle {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.passengerTypeSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.passengerControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.passengerButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--primary-color);
+}
+
+.passengerButton:not(:disabled):hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.passengerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.passengerNote {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .mainSearch {
+    grid-template-columns: 1fr;
+  }
+  
+  .optionsSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .locationSection,
+  .dateSection,
+  .passengerAndCabinContainer {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .horizontalForm {
+    padding: 1.5rem;
+  }
+  
+  .swapButton {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 1rem 0;
+  }
+  
+  .swapButton:hover {
+    transform: translateX(-50%) rotate(180deg);
+  }
+}
+
+/* Trip Type Selector */
+.tripTypeSelector {
+  display: flex;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-normal);
+  overflow: hidden;
+  background: var(--background-light);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.tripTypeButton {
+  flex: 1;
+  padding: 1.25rem 1rem;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--text-light);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tripTypeButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(58, 134, 255, 0.1), rgba(58, 134, 255, 0));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tripTypeButton:hover {
+  color: var(--primary-color);
+}
+
+.tripTypeButton:hover::before {
+  opacity: 1;
+}
+
+.activeTrip {
+  color: var(--primary-color);
+  font-weight: 600;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tripIcon {
+  font-size: 1.1rem;
+}
+
+/* Fix Passenger Dropdown */
+.passengerSelector {
+  position: relative;
+  width: 90%;
+  height: 56px;
+  padding: 0 16px 0 48px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-normal);
+  display: flex;
+  align-items: center;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.passengerSelector:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.passengerDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  left: 0;
+  width: 300px;
+  background: white;
+  border-radius: var(--radius-normal);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  padding: 1.5rem;
+  animation: fadeInDown 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Fix dropdown icon */
+.dropdownIcon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  transition: transform 0.3s ease;
+}
+
+.passengerSelector:hover .dropdownIcon {
+  color: var(--primary-color);
+}
+
+/* Add dropdown animation */
+.dropdownOpen {
+  transform: translateY(-50%) rotate(180deg);
+  color: var(--primary-color);
+}
+
+/* Add to your Booking.module.css */
+.buttonSpinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+.errorMessage {
+  color: var(--error-color);
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Add this to your Flights.module.css */
+.mockDataBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 248, 230, 0.9);
+  color: #b68303;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-normal);
+  margin-bottom: 1rem;
+  border: 1px solid #f0d283;
+}
+
+.searchProgress {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.progressBar {
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.progressText {
+  font-size: 0.875rem;
+  color: var(--text-light);
+  text-align: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

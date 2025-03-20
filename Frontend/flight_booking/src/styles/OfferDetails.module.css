@@ -1,0 +1,680 @@
+.offerDetails {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #007bff;
+  cursor: pointer;
+  margin-right: 2rem;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.backButton:hover {
+  color: #0056b3;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+/* Progress Bar */
+.progressBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepNumber {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.progressStep.active .stepNumber {
+  background-color: #007bff;
+  color: white;
+}
+
+.stepName {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.progressStep.active .stepName {
+  color: #007bff;
+  font-weight: 500;
+}
+
+.progressLine {
+  flex-grow: 1;
+  height: 2px;
+  background-color: #e9ecef;
+  margin: 0 1rem;
+}
+
+/* Review Section */
+.reviewSection {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 2rem;
+}
+
+.flightSummary {
+  padding-right: 2rem;
+}
+
+.flightSummary h2, .fareDetails h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.flightCard {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.flightHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.flightRoute h3 {
+  margin: 0;
+  margin-bottom: 0.25rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.flightDate {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.flightDuration {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+}
+
+.segment {
+  padding: 1rem 0;
+  border-bottom: 1px dashed #eaeaea;
+}
+
+.segment:last-child {
+  border-bottom: none;
+}
+
+.airline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.airlineLogo {
+  width: 24px;
+  height: 24px;
+}
+
+.flightPath {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.airport {
+  text-align: center;
+  min-width: 100px;
+}
+
+.time {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.code {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.city {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.flightLine {
+  flex-grow: 1;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.duration {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  height: 2px;
+  background-color: #ddd;
+  width: 100%;
+  position: relative;
+}
+
+.planeIcon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+  color: #007bff;
+}
+
+.fareCard {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.fareHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.fareHeader h3 {
+  margin: 0;
+}
+
+.baggageItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.baggageItem:last-child {
+  border-bottom: none;
+}
+
+.passengerType {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.baggageInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.priceBreakdown {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.priceBreakdown h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.priceItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.priceItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.priceItem:last-child {
+  border-bottom: none;
+}
+
+.priceItem.total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  color: #333;
+}
+
+.continueButton {
+  grid-column: 1 / -1;
+  background-color: #007bff;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  justify-self: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.continueButton:hover {
+  background-color: #0056b3;
+}
+
+/* Passenger Section */
+.passengerSection {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.passengerForm {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.passengerForm h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-transform: capitalize;
+}
+
+/* This content was duplicated - removing duplication */
+/*
+.offerDetails {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+*/
+
+.backButton {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #007bff;
+  cursor: pointer;
+  margin-right: 2rem;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.backButton:hover {
+  color: #0056b3;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+/* Progress Bar */
+.progressBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepNumber {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.progressStep.active .stepNumber {
+  background-color: #007bff;
+  color: white;
+}
+
+.stepName {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.progressStep.active .stepName {
+  color: #007bff;
+  font-weight: 500;
+}
+
+.progressLine {
+  flex-grow: 1;
+  height: 2px;
+  background-color: #e9ecef;
+  margin: 0 1rem;
+}
+
+/* Review Section */
+.reviewSection {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 2rem;
+}
+
+.flightSummary {
+  padding-right: 2rem;
+}
+
+.flightSummary h2, .fareDetails h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.flightCard {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.flightHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.flightRoute h3 {
+  margin: 0;
+  margin-bottom: 0.25rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.flightDate {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.flightDuration {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+}
+
+.segment {
+  padding: 1rem 0;
+  border-bottom: 1px dashed #eaeaea;
+}
+
+.segment:last-child {
+  border-bottom: none;
+}
+
+.airline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.airlineLogo {
+  width: 24px;
+  height: 24px;
+}
+
+.flightPath {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.airport {
+  text-align: center;
+  min-width: 100px;
+}
+
+.time {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.code {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.city {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.flightLine {
+  flex-grow: 1;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.duration {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  height: 2px;
+  background-color: #ddd;
+  width: 100%;
+  position: relative;
+}
+
+.planeIcon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+  color: #007bff;
+}
+
+.fareCard {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.fareHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.fareHeader h3 {
+  margin: 0;
+}
+
+.baggageItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.baggageItem:last-child {
+  border-bottom: none;
+}
+
+.passengerType {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.baggageInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.priceBreakdown {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.priceBreakdown h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.priceItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.priceItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.priceItem:last-child {
+  border-bottom: none;
+}
+
+.priceItem.total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  color: #333;
+}
+
+.continueButton {
+  grid-column: 1 / -1;
+  background-color: #007bff;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  justify-self: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.continueButton:hover {
+  background-color: #0056b3;
+}
+
+/* Passenger Section */
+.passengerSection {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.passengerForm {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.passengerForm h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-transform: capitalize;
+}

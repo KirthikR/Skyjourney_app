@@ -1,0 +1,383 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.header h1 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: #666;
+}
+
+.flightInfoCard {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.flightInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flightRoute {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.airport {
+  text-align: center;
+}
+
+.airportCode {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.airportName {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.arrow {
+  margin: 0 1.5rem;
+  color: #007bff;
+}
+
+.flightDetails {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.detailItem {
+  text-align: center;
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: #333;
+}
+
+.seatMapContainer {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.seatLegend {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.legendBox {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+}
+
+.available {
+  background-color: #e9ecef;
+}
+
+.selected {
+  background-color: #28a745;
+}
+
+.occupied {
+  background-color: #dc3545;
+}
+
+.premium {
+  background-color: #17a2b8;
+}
+
+.seatMap {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+
+.cabin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.cabinClass {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.rowNumber {
+  width: 24px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.875rem;
+  margin-right: 0.75rem;
+}
+
+.seats {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.seatGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.seatGroup + .seatGroup {
+  margin-left: 2rem;
+}
+
+.seat {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #ddd;
+}
+
+.seat.available {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.seat.selected {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.seat.occupied {
+  background-color: #dc3545;
+  color: white;
+  cursor: not-allowed;
+  border-color: #dc3545;
+}
+
+.seat.premium {
+  background-color: #17a2b8;
+  color: white;
+  border-color: #17a2b8;
+}
+
+.seat.available:hover {
+  background-color: #ced4da;
+}
+
+.passengerSeatSelection {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.passengerSeatSelection h3 {
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.passengerSeatList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.passengerSeatItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.passengerInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.passengerIcon {
+  color: #6c757d;
+  font-size: 1.25rem;
+}
+
+.passengerName {
+  font-weight: 500;
+  color: #333;
+}
+
+.passengerType {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.seatInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.selectedSeat {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.seatButton {
+  background-color: #e9ecef;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.seatButton:hover {
+  background-color: #ced4da;
+}
+
+.error {
+  color: #dc3545;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.backButton, .continueButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.backButton {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+}
+
+.backButton:hover {
+  background-color: #e9ecef;
+}
+
+.continueButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.continueButton:hover {
+  background-color: #0069d9;
+}
+
+@media (max-width: 768px) {
+  .flightInfo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .flightRoute {
+    margin-bottom: 1.5rem;
+  }
+  
+  .flightDetails {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .detailItem {
+    flex-basis: calc(50% - 1rem);
+  }
+  
+  .passengerSeatItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .seatInfo {
+    align-self: flex-end;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .backButton, .continueButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,323 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.confirmationHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.successIcon {
+  font-size: 4rem;
+  color: #4caf50;
+  margin-bottom: 1rem;
+}
+
+.confirmationHeader h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2.5rem;
+}
+
+.confirmationHeader p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.bookingRef {
+  background-color: #f8f9fa;
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  border: 1px dashed #ddd;
+}
+
+.bookingRef span {
+  color: #666;
+  margin-right: 0.5rem;
+}
+
+.bookingRef strong {
+  color: #333;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+}
+
+.confirmationCard {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.confirmationCard h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.flightSegment {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.flightSegment:last-child {
+  border-bottom: none;
+}
+
+.segmentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.segmentHeader h3 {
+  margin: 0;
+  color: #333;
+}
+
+.airline {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.flightRoute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+}
+
+.routePoint {
+  text-align: center;
+  flex: 1;
+}
+
+.airportCode {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.time {
+  font-size: 1.25rem;
+  color: #333;
+  margin-top: 0.5rem;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.routeLine {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.duration {
+  background-color: #f1f8ff;
+  color: #007bff;
+  padding: 0.25rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.line {
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.planeIcon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  color: #007bff;
+}
+
+.passengerSection {
+  margin-top: 2rem;
+}
+
+.passengerSection h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.passengerList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.passenger {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.passengerIcon {
+  color: #666;
+  margin-right: 0.75rem;
+}
+
+.passengerName {
+  font-weight: 500;
+  color: #333;
+}
+
+.totalPrice {
+  margin-top: 2rem;
+  text-align: right;
+  font-size: 1.1rem;
+}
+
+.totalPrice span {
+  color: #666;
+  margin-right: 0.75rem;
+}
+
+.totalPrice strong {
+  color: #28a745;
+  font-size: 1.25rem;
+}
+
+.nextSteps {
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+.nextSteps h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.stepGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.step {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+}
+
+.stepIcon {
+  background-color: #f0f7ff;
+  color: #007bff;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 1rem;
+}
+
+.step h3 {
+  margin: 0 0 0.75rem;
+  color: #333;
+}
+
+.step p {
+  margin: 0 0 1.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.stepButton {
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.stepButton:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.actions {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.homeButton {
+  background-color: #ff5e14;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.homeButton:hover {
+  background-color: #e04d00;
+}
+
+.homeButton svg {
+  margin-left: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .flightRoute {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .routeLine {
+    width: 100%;
+    flex-direction: row;
+  }
+  
+  .line {
+    width: 2px;
+    height: 50px;
+  }
+  
+  .planeIcon {
+    transform: translate(-50%, -50%);
+  }
+  
+  .passengerList {
+    grid-template-columns: 1fr;
+  }
+}
