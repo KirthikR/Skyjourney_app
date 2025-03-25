@@ -1,0 +1,759 @@
+.conciergeContainer {
+  color: #333;
+  font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+}
+
+/* Hero Section */
+.heroSection {
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+              url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80');
+  background-size: cover;
+  background-position: center;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+  text-align: center;
+  color: white;
+  z-index: 1;
+}
+
+.heroText {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1s ease;
+}
+
+.heroText.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.heroSection h1 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #e6c200, #ffd700, #ffec99);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+
+.heroSection p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+  font-weight: 300;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.eliteBadgeHero {
+  display: inline-block;
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 7px 20px;
+  border-radius: 30px;
+  letter-spacing: 1.5px;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.heroDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #fff);
+}
+
+/* Overview Section */
+.overviewSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 20px;
+}
+
+.sectionIntro {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionIcon {
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sectionIntro h2 {
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.sectionIntro p {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+.serviceNavigation {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+}
+
+.serviceNavigation::-webkit-scrollbar {
+  height: 6px;
+}
+
+.serviceNavigation::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.serviceTab {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 30px;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #555;
+  font-weight: 500;
+}
+
+.serviceTab:hover {
+  background: #f9f9f9;
+}
+
+.activeTab {
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tabIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.serviceCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #f0f0f0;
+}
+
+.serviceCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.serviceIconContainer {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(45deg, rgba(184, 134, 11, 0.1), rgba(255, 215, 0, 0.1));
+  color: #b8860b;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 1.5rem;
+}
+
+.serviceCard h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.serviceCard p {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+.learnMoreBtn {
+  background: transparent;
+  border: 1px solid #b8860b;
+  color: #b8860b;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.learnMoreBtn:hover {
+  background: rgba(184, 134, 11, 0.05);
+}
+
+.serviceDetailView {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detailIcon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, rgba(184, 134, 11, 0.1), rgba(255, 215, 0, 0.1));
+  color: #b8860b;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.detailHeader h2 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.detailDescription {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+.detailFeatures {
+  margin-bottom: 2.5rem;
+}
+
+.detailFeatures h3 {
+  margin: 0 0 1.2rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.detailFeatures ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem 2rem;
+}
+
+.detailFeatures li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.checkmark {
+  color: #b8860b;
+  font-weight: bold;
+}
+
+.detailAction {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.detailAction p {
+  margin: 0 0 1.2rem 0;
+  font-size: 1rem;
+  color: #666;
+}
+
+.requestServiceBtn {
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(184, 134, 11, 0.2);
+}
+
+.requestServiceBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(184, 134, 11, 0.3);
+}
+
+/* Testimonials Section */
+.testimonialsSection {
+  background: #f9f9f9;
+  padding: 5rem 20px;
+  text-align: center;
+}
+
+.testimonialsSection h2 {
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 0 0 3rem 0;
+  color: #333;
+}
+
+.testimonialsGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.testimonialCard {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.testimonialHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.testimonialAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.testimonialHeader h3 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.testimonialLocation {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.testimonialRating {
+  display: flex;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.starFilled {
+  color: #ffd700;
+}
+
+.starEmpty {
+  color: #e0e0e0;
+}
+
+.testimonialText {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  font-style: italic;
+}
+
+/* Request Form Section */
+.requestSection {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+              url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');
+  background-size: cover;
+  background-position: center;
+  padding: 5rem 20px;
+  color: white;
+}
+
+.requestContainer {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.requestIntro {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.requestIntro h2 {
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(45deg, #e6c200, #ffd700, #ffec99);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.requestIntro p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.requestForm {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.inputWithIcon {
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.formGroup input, 
+.formGroup select, 
+.formGroup textarea {
+  width: 100%;
+  padding: 0.8rem 1.2rem 0.8rem 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+}
+
+.formGroup select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 120px;
+  padding: 1rem 1.2rem;
+}
+
+.formGroup input::placeholder, 
+.formGroup textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.priorityOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.priorityOption {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.priorityOption:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.selectedPriority {
+  background: rgba(184, 134, 11, 0.3);
+  border-color: #ffd700;
+}
+
+.priorityName {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.priorityDescription {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.formActions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.submitRequestBtn {
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(184, 134, 11, 0.2);
+}
+
+.submitRequestBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(184, 134, 11, 0.3);
+}
+
+.privacyNote {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Membership Section */
+.membershipSection {
+  background: linear-gradient(45deg, #1a1a1a, #333);
+  color: white;
+  padding: 5rem 20px;
+}
+
+.membershipContent {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.membershipSection h2 {
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(45deg, #e6c200, #ffd700, #ffec99);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.membershipSection p {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.membershipBenefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.benefitIcon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.benefitText h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.benefitText p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.membershipBtn {
+  background: linear-gradient(45deg, #b8860b, #ffd700);
+  color: #111;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.membershipBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Global Contacts Section */
+.globalContactsSection {
+  padding: 5rem 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.globalContactsSection h2 {
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 0 0 3rem 0;
+  color: #333;
+}
+
+.contactsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.contactCard {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.contactCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.contactCard h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.contactPhone {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.contactEmail {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heroSection h1 {
+    font-size: 2.5rem;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .priorityOptions {
+    grid-template-columns: 1fr;
+  }
+  
+  .benefitItem {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .benefitText {
+    text-align: center;
+  }
+}

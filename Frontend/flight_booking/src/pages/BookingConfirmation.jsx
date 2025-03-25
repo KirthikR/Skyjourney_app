@@ -1,53 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FaCheckCircle, FaPlane, FaCalendar, FaUser } from 'react-icons/fa';
 import styles from './BookingConfirmation.module.css';
-import { FaCheck, FaPlane, FaUser, FaHome } from 'react-icons/fa';
 
-export default function BookingConfirmation() {
+const BookingConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [bookingData, setBookingData] = useState(null);
-  const [bookingComplete, setBookingComplete] = useState(false);
-  const [bookingReference, setBookingReference] = useState('');
+  const [bookingDetails, setBookingDetails] = useState(null);
   
   useEffect(() => {
-    // Check if payment was confirmed
-    if (!location.state?.paymentConfirmed) {
-      console.log('Payment not confirmed, redirecting to booking');
-      navigate('/booking');
-      return;
+    // Handle multiple possible data formats
+    if (location.state?.bookingDetails) {
+      // Use booking details directly if provided
+      setBookingDetails(location.state.bookingDetails);
+    } else if (location.state?.selectedOffer && location.state?.passengers) {
+      // Create booking details from offer and passenger data
+      const offer = location.state.selectedOffer;
+      const passengers = location.state.passengers;
+      
+      setBookingDetails({
+        bookingId: `BK${Math.floor(Math.random() * 1000000)}`,
+        airline: offer.owner?.name || 'Airline',
+        departureCode: offer.slices[0]?.origin?.iata_code || 'N/A',
+        departureCity: offer.slices[0]?.origin?.city_name || 'Departure City',
+        arrivalCode: offer.slices[0]?.destination?.iata_code || 'N/A',
+        arrivalCity: offer.slices[0]?.destination?.city_name || 'Arrival City',
+        departureDate: formatDate(offer.slices[0]?.segments[0]?.departing_at),
+        departureTime: formatTime(offer.slices[0]?.segments[0]?.departing_at),
+        arrivalDate: formatDate(offer.slices[0]?.segments[0]?.arriving_at),
+        arrivalTime: formatTime(offer.slices[0]?.segments[0]?.arriving_at),
+        passengerName: `${passengers[0]?.firstName || ''} ${passengers[0]?.lastName || ''}`,
+        totalAmount: offer.total_amount,
+        currency: offer.total_currency,
+        paymentMethod: location.state?.paymentMethod || 'Credit Card'
+      });
+    } else {
+      // Fallback to demo data if nothing is provided
+      setBookingDetails({
+        bookingId: 'DEMO12345',
+        airline: 'Demo Airlines',
+        departureCode: 'JFK',
+        departureCity: 'New York',
+        arrivalCode: 'LAX',
+        arrivalCity: 'Los Angeles',
+        departureDate: '2025-03-25',
+        departureTime: '10:00 AM',
+        arrivalDate: '2025-03-25',
+        arrivalTime: '1:30 PM',
+        passengerName: 'John Doe',
+        totalAmount: '349.99',
+        currency: 'USD',
+        paymentMethod: 'Credit Card'
+      });
     }
-
-    if (!location.state?.selectedOffer || !location.state?.passengers) {
-      console.error('Missing booking data, redirecting to home');
-      navigate('/');
-      return;
-    }
-    
-    setBookingData({
-      flight: location.state.selectedOffer,
-      passengers: location.state.passengers,
-      paymentMethod: location.state.paymentMethod || 'Credit Card'
-    });
-    
-    // Simulate booking process
-    const timer = setTimeout(() => {
-      setBookingComplete(true);
-      setBookingReference('SKYB' + Math.floor(100000 + Math.random() * 900000));
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, [location.state, navigate]);
+  }, [location]);
   
-  const handleReturnHome = () => {
-    navigate('/');
-  };
-  
-  const getPrimaryPassenger = () => {
-    return bookingData?.passengers[0] || {};
-  };
-  
-  if (!bookingData) {
+  if (!bookingDetails) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingContainer}>
@@ -61,133 +69,89 @@ export default function BookingConfirmation() {
   return (
     <div className={styles.container}>
       <div className={styles.confirmationCard}>
-        {!bookingComplete ? (
-          <>
-            <div className={styles.processingHeader}>
-              <div className={styles.spinner}></div>
-              <h2>Processing Your Booking</h2>
-              <p>Please wait while we confirm your flight reservation...</p>
+        <div className={styles.successHeader}>
+          <div className={styles.checkmarkCircle}>
+            <FaCheckCircle className={styles.checkmark} />
+          </div>
+          <h1>Booking Confirmed!</h1>
+          <p>Your flight has been successfully booked.</p>
+        </div>
+        
+        <div className={styles.bookingReference}>
+          <span>Booking Reference:</span>
+          <span className={styles.reference}>{bookingDetails.bookingId}</span>
+        </div>
+        
+        <div className={styles.flightDetails}>
+          <h3><FaPlane className={styles.icon} /> Flight Details</h3>
+          <div className={styles.detailsGrid}>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>Airline</span>
+              <span className={styles.value}>{bookingDetails.airline}</span>
             </div>
-            
-            <div className={styles.flightSummary}>
-              <div className={styles.summaryRow}>
-                <span>Flight:</span>
-                <span>
-                  {bookingData.flight.slices[0]?.origin?.iata_code || 'N/A'} to {bookingData.flight.slices[0]?.destination?.iata_code || 'N/A'}
-                </span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>Airline:</span>
-                <span>{bookingData.flight.owner?.name || 'Airline'}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>Passengers:</span>
-                <span>{bookingData.passengers.length}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>Total:</span>
-                <span>{bookingData.flight.total_currency || 'USD'} {bookingData.flight.total_amount || 'N/A'}</span>
-              </div>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>Flight</span>
+              <span className={styles.value}>{bookingDetails.airline.substring(0, 2).toUpperCase()}{Math.floor(Math.random() * 1000) + 1000}</span>
             </div>
-          </>
-        ) : (
-          <>
-            <div className={styles.successHeader}>
-              <div className={styles.checkmarkCircle}>
-                <FaCheck className={styles.checkmark} />
-              </div>
-              <h1>Booking Confirmed!</h1>
-              <p>Your flight has been successfully booked</p>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>From</span>
+              <span className={styles.value}>{bookingDetails.departureCode} - {bookingDetails.departureCity}</span>
             </div>
-            
-            <div className={styles.bookingReference}>
-              <span>Booking Reference:</span>
-              <span className={styles.reference}>{bookingReference}</span>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>To</span>
+              <span className={styles.value}>{bookingDetails.arrivalCode} - {bookingDetails.arrivalCity}</span>
             </div>
-            
-            <div className={styles.divider}></div>
-            
-            <div className={styles.flightDetails}>
-              <h3><FaPlane className={styles.icon} /> Flight Details</h3>
-              
-              <div className={styles.detailsGrid}>
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>From</span>
-                  <span className={styles.value}>
-                    {bookingData.flight.slices[0]?.origin?.iata_code || 'N/A'} ({bookingData.flight.slices[0]?.origin?.city_name || 'N/A'})
-                  </span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>To</span>
-                  <span className={styles.value}>
-                    {bookingData.flight.slices[0]?.destination?.iata_code || 'N/A'} ({bookingData.flight.slices[0]?.destination?.city_name || 'N/A'})
-                  </span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Airline</span>
-                  <span className={styles.value}>{bookingData.flight.owner?.name || 'Airline'}</span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Flight Number</span>
-                  <span className={styles.value}>{bookingData.flight.id?.substring(0, 8) || 'N/A'}</span>
-                </div>
-              </div>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>Departure</span>
+              <span className={styles.value}>{bookingDetails.departureDate} at {bookingDetails.departureTime}</span>
             </div>
-            
-            <div className={styles.divider}></div>
-            
-            <div className={styles.passengerDetails}>
-              <h3><FaUser className={styles.icon} /> Primary Passenger</h3>
-              
-              <div className={styles.detailsGrid}>
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Name</span>
-                  <span className={styles.value}>
-                    {getPrimaryPassenger().title} {getPrimaryPassenger().firstName} {getPrimaryPassenger().lastName}
-                  </span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Email</span>
-                  <span className={styles.value}>{getPrimaryPassenger().email}</span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Phone</span>
-                  <span className={styles.value}>{getPrimaryPassenger().phone}</span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Total Passengers</span>
-                  <span className={styles.value}>{bookingData.passengers.length}</span>
-                </div>
-                
-                <div className={styles.detailItem}>
-                  <span className={styles.label}>Payment Method</span>
-                  <span className={styles.value}>
-                    {bookingData.paymentMethod === 'creditCard' ? 'Credit Card' : 
-                     bookingData.paymentMethod === 'paypal' ? 'PayPal' : 
-                     bookingData.paymentMethod === 'applePay' ? 'Apple Pay' : 
-                     bookingData.paymentMethod}
-                  </span>
-                </div>
-              </div>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>Arrival</span>
+              <span className={styles.value}>{bookingDetails.arrivalDate} at {bookingDetails.arrivalTime}</span>
             </div>
-            
-            <div className={styles.nextSteps}>
-              <p>A confirmation email has been sent to {getPrimaryPassenger().email}</p>
-              <p>Please check your email for your e-ticket and flight details.</p>
+          </div>
+        </div>
+        
+        <div className={styles.divider}></div>
+        
+        <div className={styles.passengerDetails}>
+          <h3><FaUser className={styles.icon} /> Passenger Information</h3>
+          <div className={styles.detailsGrid}>
+            <div className={styles.detailItem}>
+              <span className={styles.label}>Passenger</span>
+              <span className={styles.value}>{bookingDetails.passengerName}</span>
             </div>
-            
-            <button onClick={handleReturnHome} className={styles.homeButton}>
-              <FaHome className={styles.icon} /> Return to Home
-            </button>
-          </>
-        )}
+            <div className={styles.detailItem}>
+              <span className={styles.label}>Total Price</span>
+              <span className={styles.value}>${parseFloat(bookingDetails.totalAmount).toFixed(2)} {bookingDetails.currency}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className={styles.nextSteps}>
+          <h3>Next Steps</h3>
+          <p>A confirmation email has been sent to your email address.</p>
+          <p>You can check in online 24 hours before your flight departure.</p>
+          <p>Please arrive at the airport at least 2 hours before your scheduled departure time.</p>
+        </div>
+        
+        <div className={styles.actions}>
+          <button 
+            className={styles.homeButton}
+            onClick={() => window.print()}
+          >
+            Print Confirmation
+          </button>
+          <button 
+            className={styles.homeButton}
+            onClick={() => navigate('/')}
+          >
+            Return to Home
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default BookingConfirmation;

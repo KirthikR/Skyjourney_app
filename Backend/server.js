@@ -5,6 +5,7 @@ const cors = require('cors');
 const axios = require('axios');
 const rateLimit = require("express-rate-limit");
 const NodeCache = require("node-cache");
+const chatbotRoutes = require('./routes/chatbotRoutes');
 const app = express();
 
 // Log environment variables (for debugging)
@@ -13,10 +14,14 @@ console.log('PORT:', process.env.PORT);
 console.log('API Key defined:', process.env.DUFFEL_API_KEY ? 'Yes' : 'No');
 
 // Make sure PORT is set with a fallback
-const PORT = process.env.PORT || 3001; // Changed fallback to 3001
+const PORT = process.env.PORT || 3002; // Changed fallback to 3002
 
 // Enable CORS for your frontend
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Your React app's origin
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Add rate limiting to prevent abuse
@@ -80,85 +85,98 @@ function formatDuffelError(error) {
 // Add basic caching for frequent searches
 const searchCache = new NodeCache({ stdTTL: 300 }); // 5 minute cache
 
-// Proxy endpoint for flight search
+// Simplified flight search endpoint
 app.post('/api/flights/search', async (req, res) => {
   try {
     console.log('Received flight search request:', JSON.stringify(req.body, null, 2));
     
-    // Validate request format
-    if (!req.body.slices || !req.body.passengers || !req.body.cabin_class) {
-      return res.status(400).json({ 
-        error: 'Invalid request format',
-        message: 'Missing required fields: slices, passengers, or cabin_class'
-      });
+    // Ensure correct format for Duffel API - handle both formats
+    let duffelRequest;
+    
+    // If data is already properly nested
+    if (req.body.data) {
+      duffelRequest = req.body;
+    } 
+    // If data is not nested under 'data' key
+    else {
+      duffelRequest = {
+        data: {
+          slices: req.body.slices || [],
+          passengers: req.body.passengers || [],
+          cabin_class: req.body.cabin_class || 'economy'
+        }
+      };
     }
     
-    // Check cache for existing results
-    const cacheKey = JSON.stringify(req.body);
-    const cachedResult = searchCache.get(cacheKey);
-
-    if (cachedResult) {
-      console.log('Returning cached flight search results');
-      return res.json(cachedResult);
-    }
+    console.log('Formatted Duffel request:', JSON.stringify(duffelRequest, null, 2));
     
-    // Step 1: Create offer request
-    const offerRequestResponse = await duffelClient.post('/air/offer_requests', req.body);
-    const offerRequestId = offerRequestResponse.data.data.id;
-    console.log('Offer request created with ID:', offerRequestId);
+    // Create the offer request
+    const offerResponse = await duffelClient.post('/air/offer_requests', duffelRequest);
+    const offerId = offerResponse.data.data.id;
+    console.log('Created offer request ID:', offerId);
     
-    // Step 2: Poll until the offer request is complete
-    let offerRequest;
-    let attempts = 0;
-    const MAX_ATTEMPTS = 10;
+    // Get offers for this request
+    const offersResponse = await duffelClient.get(`/air/offers?offer_request_id=${offerId}&limit=20`);
     
-    do {
-      if (attempts > 0) {
-        // Wait before polling again
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-      
-      const response = await duffelClient.get(`/air/offer_requests/${offerRequestId}`);
-      offerRequest = response.data.data;
-      console.log(`Polling offer request (${attempts + 1}/${MAX_ATTEMPTS}), status: ${offerRequest.status}`);
-      
-      attempts++;
-    } while (offerRequest.status !== 'complete' && attempts < MAX_ATTEMPTS);
-    
-    if (offerRequest.status !== 'complete') {
-      return res.status(504).json({
-        error: 'Offer request timeout',
-        message: 'The flight search is taking longer than expected. Please try again.'
-      });
-    }
-    
-    // Step 3: Get offers once the request is complete
-    const offersResponse = await duffelClient.get(`/air/offers?offer_request_id=${offerRequestId}`);
-    console.log(`Found ${offersResponse.data.data.length} offers`);
-    
-    // Cache the search results
-    searchCache.set(cacheKey, offersResponse.data);
-    
-    // Return the offers to the frontend
-    res.json(offersResponse.data);
+    res.json({
+      success: true,
+      data: offersResponse.data.data
+    });
   } catch (error) {
-    console.error('Error in flight search:', error.message);
+    console.error('Error searching for flights:', error.response?.data);
+    res.status(error.response?.status || 500).json(error.response?.data || { error: error.message });
+  }
+});
+
+// Update your offer_requests endpoint
+
+app.post('/api/duffel/air/offer_requests', async (req, res) => {
+  try {
+    console.log('Raw request body:', JSON.stringify(req.body, null, 2));
     
-    if (error.response) {
-      console.error('Duffel API error details:', 
-        error.response.status, 
-        JSON.stringify(error.response.data, null, 2)
-      );
-      res.status(error.response.status).json({
-        error: 'Error from Duffel API',
-        details: error.response.data
-      });
-    } else {
-      res.status(500).json({ 
-        error: 'Server error',
-        message: error.message 
-      });
-    }
+    // Make sure request matches Duffel API format exactly
+    const duffelRequest = {
+      data: {
+        slices: req.body.data.slices.map(slice => ({
+          origin: slice.origin,
+          destination: slice.destination,
+          departure_date: slice.departure_date
+        })),
+        passengers: req.body.data.passengers,
+        cabin_class: req.body.data.cabin_class
+      }
+    };
+    
+    console.log('Formatted Duffel request:', JSON.stringify(duffelRequest, null, 2));
+    
+    const response = await duffelClient.post('/air/offer_requests', duffelRequest);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Duffel API error details:', error.response?.data);
+    
+    // Return more detailed error information
+    res.status(error.response?.status || 500).json({
+      status: error.response?.status,
+      message: error.response?.data?.meta?.message || error.message,
+      errors: error.response?.data?.meta?.errors || [],
+      details: error.response?.data || {}
+    });
+  }
+});
+
+// Proxy endpoint for getting offers
+app.get('/api/duffel/air/offers', async (req, res) => {
+  try {
+    console.log('Received request for offers with params:', req.query);
+    const response = await duffelClient.get('/air/offers', { 
+      params: req.query 
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error making Duffel API request:', error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data || { message: error.message }
+    });
   }
 });
 
@@ -194,13 +212,81 @@ app.post('/api/bookings', async (req, res) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Proxy server is running' });
+  res.json({
+    status: 'ok',
+    message: 'Backend server is running',
+    duffelApiKey: process.env.DUFFEL_API_KEY ? 'Configured' : 'Missing'
+  });
 });
 
 // Test endpoint to verify server is running
 app.get('/api/status', (req, res) => {
   res.json({ status: 'Server is running', env: process.env.NODE_ENV });
 });
+
+// Add this endpoint to test your Duffel API key
+
+app.get('/api/duffel/test', async (req, res) => {
+  try {
+    // Try a simple request to verify API key works
+    const response = await duffelClient.get('/air/airports?iata_code=LHR');
+    res.json({
+      status: 'success',
+      message: 'Duffel API connection successful',
+      data: response.data
+    });
+  } catch (error) {
+    console.error('Duffel API test failed:', error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({
+      status: 'error',
+      message: 'Duffel API test failed',
+      error: error.response?.data || error.message
+    });
+  }
+});
+
+// Add this test endpoint with sample data
+
+app.get('/api/duffel/sample', async (req, res) => {
+  try {
+    // Use a sample request that should work with Duffel
+    const sampleRequest = {
+      data: {
+        slices: [
+          {
+            origin: "LHR",
+            destination: "JFK",
+            departure_date: "2025-05-01"
+          }
+        ],
+        passengers: [
+          {
+            type: "adult"
+          }
+        ],
+        cabin_class: "economy"
+      }
+    };
+    
+    console.log('Sending sample request to Duffel:', JSON.stringify(sampleRequest, null, 2));
+    
+    const response = await duffelClient.post('/air/offer_requests', sampleRequest);
+    res.json({
+      status: 'success',
+      message: 'Sample request successful',
+      data: response.data
+    });
+  } catch (error) {
+    console.error('Sample request failed:', error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({
+      status: 'error',
+      message: 'Sample request failed',
+      error: error.response?.data || error.message
+    });
+  }
+});
+
+app.use('/api', chatbotRoutes);
 
 // Start the server with better error handling
 app.listen(PORT, () => {

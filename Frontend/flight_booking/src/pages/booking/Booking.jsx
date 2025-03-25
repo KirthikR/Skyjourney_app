@@ -98,7 +98,7 @@ export default function BookingEmergency() {
     setError(null);
     setSearchProgress(0);
     
-    // Progress simulation for Duffel API (which can take 15-30 seconds)
+    // Progress simulation
     const progressInterval = setInterval(() => {
       setSearchProgress(prev => {
         if (prev >= 95) {
@@ -110,13 +110,22 @@ export default function BookingEmergency() {
     }, 1000);
     
     try {
-      // Format search parameters according to Duffel API requirements
+      // Validate required fields
+      if (!origin || !destination || !departDate) {
+        throw new Error('Please fill in all required fields');
+      }
+      
+      if (origin === destination) {
+        throw new Error('Origin and destination cannot be the same');
+      }
+      
+      // Format search parameters
       const formattedParams = {
         data: {
           slices: [
             {
-              origin: origin,
-              destination: destination,
+              origin: origin.toUpperCase(),
+              destination: destination.toUpperCase(),
               departure_date: departDate
             }
           ],
@@ -132,16 +141,17 @@ export default function BookingEmergency() {
       // Add return flight if round trip
       if (tripType === 'roundTrip' && returnDate) {
         formattedParams.data.slices.push({
-          origin: destination,
-          destination: origin,
+          origin: destination.toUpperCase(),
+          destination: origin.toUpperCase(),
           departure_date: returnDate
         });
       }
       
       console.log("Searching flights with params:", formattedParams);
       
-      // Make API request with error handling
       try {
+        // Use the mock endpoint for testing if needed
+        // const response = await fetch(`${apiUrl}/api/flights/mock`, {
         const response = await fetch(`${apiUrl}/api/flights/search`, {
           method: 'POST',
           headers: {
@@ -153,7 +163,7 @@ export default function BookingEmergency() {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           console.error('API Error:', response.status, errorData);
-          throw new Error(`API error ${response.status}: ${errorData.error || response.statusText}`);
+          throw new Error(`API error ${response.status}: ${JSON.stringify(errorData.error || response.statusText)}`);
         }
         
         const results = await response.json();
@@ -161,6 +171,8 @@ export default function BookingEmergency() {
         // Complete progress bar
         clearInterval(progressInterval);
         setSearchProgress(100);
+        
+        console.log('Flight search results:', results);
         
         if (!results.data || !Array.isArray(results.data)) {
           console.error('Invalid API response format:', results);
@@ -170,9 +182,12 @@ export default function BookingEmergency() {
         // Navigate to results page with real API data
         navigate('/flights', { 
           state: { 
-            results: results,
-            searchParams: formattedParams.data,
-            isMockData: false // Explicitly set this
+            searchParams: {
+              slices: formattedParams.data.slices,
+              passengers: formattedParams.data.passengers,
+              cabin_class: formattedParams.data.cabin_class
+            },
+            results: results.data
           } 
         });
       } catch (fetchError) {
@@ -185,6 +200,54 @@ export default function BookingEmergency() {
       setError(`We couldn't find any flights: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Format search parameters correctly for Duffel API
+      const searchParams = {
+        slices: [
+          {
+            origin: departureAirport,
+            destination: arrivalAirport,
+            departure_date: departureDate
+          }
+        ],
+        passengers: {
+          adults: parseInt(passengers.adults) || 1,
+          children: parseInt(passengers.children) || 0,
+          infants: parseInt(passengers.infants) || 0
+        },
+        cabinClass: travelClass.toLowerCase()
+      };
+      
+      // Add return flight if roundtrip
+      if (tripType === 'roundtrip' && returnDate) {
+        searchParams.slices.push({
+          origin: arrivalAirport,
+          destination: departureAirport,
+          departure_date: returnDate
+        });
+      }
+      
+      console.log('Searching flights with params:', searchParams);
+      
+      // Navigate to flights page with search parameters
+      navigate('/flights', { 
+        state: { 
+          searchParams
+        } 
+      });
+    } catch (error) {
+      console.error('Search error:', error);
+      setError(error.message || 'An error occurred during search');
+    } finally {
+      setIsLoading(false);
     }
   };
 

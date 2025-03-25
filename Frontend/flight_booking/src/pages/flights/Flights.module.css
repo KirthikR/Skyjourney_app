@@ -181,20 +181,15 @@
 
 /* Error state */
 .errorContainer {
-  background: #fff3f3;
-  border-left: 4px solid #dc3545;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin: 2rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
   text-align: center;
-  padding: 2rem;
-  background-color: #fff5f5;
+  background: #fff5f5;
   border-radius: 8px;
-  border: 1px solid #fed7d7;
-  margin: 1rem 0;
+  margin-top: 30px;
 }
 
 .errorActions {
@@ -219,9 +214,9 @@
 }
 
 .errorIcon {
-  color: #e53e3e;
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 48px;
+  color: #dc3545;
+  margin-bottom: 20px;
 }
 
 .retryButton {
@@ -649,4 +644,355 @@
 
 .primaryButton:hover {
   background-color: #2563eb;
+}
+
+.flightResultsContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.resultsTitle {
+  font-size: 28px;
+  color: #1e293b;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.noResultsIcon {
+  font-size: 48px;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0d6efd;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-top: 20px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background: #0b5ed7;
+}
+
+.searchSummary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.airport {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.directionIcon {
+  color: #0d6efd;
+}
+
+.searchDetails {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.value {
+  font-weight: 500;
+}
+
+.modifyButton {
+  background: white;
+  border: 1px solid #0d6efd;
+  color: #0d6efd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modifyButton:hover {
+  background: #f1f7ff;
+}
+
+.flightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.flightCard {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.flightCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.flightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.airline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.airlineLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.flightPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d6efd;
+}
+
+.perPerson {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.flightDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.departure, .arrival {
+  text-align: center;
+}
+
+.time {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.airport {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.flightPath {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.duration {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.pathLine {
+  width: 100%;
+  height: 2px;
+  background: #e9ecef;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.pathLine::before,
+.pathLine::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0d6efd;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pathLine::before {
+  left: 0;
+}
+
+.pathLine::after {
+  right: 0;
+}
+
+.stopInfo {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.selectButton {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selectButton:hover {
+  background: #0b5ed7;
+}
+
+@media (max-width: 768px) {
+  .searchSummary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .flightDetails {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .flightPath {
+    width: 100%;
+    padding: 20px 0;
+  }
+  
+  .departure, .arrival {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Add these styles if they don't exist */
+.flightSegment {
+  margin: 15px 0;
+}
+
+.segmentTimes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.duration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.line {
+  height: 2px;
+  background-color: #ddd;
+  width: 100%;
+  position: relative;
+}
+
+.stopDot {
+  width: 8px;
+  height: 8px;
+  background-color: #0d6efd;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.durationText {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.stopsText {
+  font-size: 12px;
+  color: #888;
+}
+
+.segmentAirports {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.airport {
+  font-size: 14px;
+  color: #666;
+}
+
+.flightError {
+  padding: 10px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-radius: 4px;
+  margin: 10px 0;
 }

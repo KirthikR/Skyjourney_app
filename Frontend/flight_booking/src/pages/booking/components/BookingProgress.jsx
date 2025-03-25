@@ -29,3 +29,40 @@ export default function BookingProgress({ currentStep }) {
     </div>
   );
 }
+
+// In your BookingProcess.jsx file, when form is submitted:
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  
+  try {
+    // Process booking details...
+    
+    // Create booking details to pass to confirmation
+    const bookingDetails = {
+      bookingId: `BK${Math.floor(Math.random() * 1000000)}`,
+      airline: selectedFlight.owner.name,
+      departureCode: selectedFlight.slices[0].origin.iata_code,
+      departureCity: selectedFlight.slices[0].origin.city || 'Departure City',
+      arrivalCode: selectedFlight.slices[0].destination.iata_code,
+      arrivalCity: selectedFlight.slices[0].destination.city || 'Arrival City',
+      departureDate: formatDate(selectedFlight.slices[0].segments[0].departing_at),
+      departureTime: formatTime(selectedFlight.slices[0].segments[0].departing_at),
+      arrivalDate: formatDate(selectedFlight.slices[0].segments[0].arriving_at),
+      arrivalTime: formatTime(selectedFlight.slices[0].segments[0].arriving_at),
+      passengerName: `${passengers[0].firstName} ${passengers[0].lastName}`,
+      totalAmount: selectedFlight.total_amount,
+      currency: selectedFlight.total_currency
+    };
+    
+    // Navigate to confirmation page with booking details
+    navigate('/booking/confirmation', {
+      state: { bookingDetails }
+    });
+  } catch (error) {
+    console.error('Error processing booking:', error);
+    setError('Failed to process booking. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};

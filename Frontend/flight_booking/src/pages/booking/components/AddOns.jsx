@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/Addons.module.css';
+import styles from './AddOns.module.css';
 import { FaSuitcase, FaUtensils, FaCouch, FaPlane, FaShoppingCart } from 'react-icons/fa';
 
 export default function Addons() {

@@ -32,22 +32,66 @@ apiClient.interceptors.response.use(
   }
 );
 
-const DUFFEL_API_URL = 'https://api.duffel.com/air';
-const DUFFEL_API_TOKEN = import.meta.env.VITE_DUFFEL_API_TOKEN; // Add your actual Duffel API token
+// Create a dedicated Duffel API client
+const duffelClient = axios.create({
+  baseURL: 'https://api.duffel.com/air',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Duffel-Version': 'v1',
+    'Authorization': `Bearer ${import.meta.env.VITE_DUFFEL_API_KEY}`
+  }
+});
 
-// Headers required for Duffel API
-const headers = {
-  'Authorization': `Bearer ${DUFFEL_API_TOKEN}`,
-  'Accept': 'application/json',
-  'Content-Type': 'application/json',
-  'Duffel-Version': 'v1'
+// Search flights using the Duffel API
+export const searchFlights = async (searchParams) => {
+  try {
+    console.log('Searching flights with Duffel API:', searchParams);
+    
+    // Format passengers for Duffel API
+    const passengers = [];
+    
+    // Add adult passengers
+    for (let i = 0; i < searchParams.passengers.adults; i++) {
+      passengers.push({ type: 'adult' });
+    }
+    
+    // Add child passengers
+    for (let i = 0; i < searchParams.passengers.children; i++) {
+      passengers.push({ type: 'child' });
+    }
+    
+    // Add infant passengers
+    for (let i = 0; i < searchParams.passengers.infants; i++) {
+      passengers.push({ type: 'infant_in_seat' });
+    }
+    
+    // Create the proper Duffel API request body
+    const requestBody = {
+      data: {
+        slices: searchParams.slices,
+        passengers: passengers,
+        cabin_class: searchParams.travelClass.toLowerCase()
+      }
+    };
+    
+    // Make the offer request
+    const offerRequestResponse = await duffelClient.post('/offer_requests', requestBody);
+    console.log('Offer request response:', offerRequestResponse.data);
+    
+    const offerRequestId = offerRequestResponse.data.data.id;
+    console.log('Offer request ID:', offerRequestId);
+    
+    // Get offers based on the request ID
+    const offersResponse = await duffelClient.get(`/offers?offer_request_id=${offerRequestId}`);
+    console.log('Offers response:', offersResponse.data);
+    
+    return offersResponse.data.data;
+  } catch (error) {
+    console.error('Duffel API error:', error.response?.data || error.message);
+    throw error;
+  }
 };
-
-// Basic flight search API
-export async function searchFlights(searchParams) {
-  // For now, use mock data
-  return getMockFlights(searchParams);
-}
 
 // Mock flight data for testing
 export function getMockFlights(searchParams) {
@@ -297,8 +341,5 @@ export const bookFlight = async (offerId, passengers) => {
 
 // Export a default API client if needed
 export default {
-  searchFlights,
-  getMockFlights,
-  getOfferDetails,
-  createOrder
+  searchFlights
 };

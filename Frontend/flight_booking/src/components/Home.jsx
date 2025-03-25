@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/Home.module.css";
 import PopularDestinations from '../components/PopularDestinations';
@@ -6,9 +6,28 @@ import TrendingDeals from '../components/TrendingDeals';
 import ChatBot from '../components/ChatBot';
 import { FaLinkedin, FaWhatsapp, FaFacebookSquare, FaYoutube, FaTwitter, FaInstagram, FaFacebook, FaArrowRight } from 'react-icons/fa';
 
-export default function Home() {
+// Add this after your imports
+const heroImages = [
+  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100",
+  "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100",
+  "https://images.unsplash.com/photo-1476900543704-4312b78632f8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100",
+  "https://images.unsplash.com/photo-1502726299822-6f583f972e02?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100",
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100"
+];
+
+const Home = () => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
+
+  // Image rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prevIndex => (prevIndex + 1) % heroImages.length);
+    }, 5000); // Change image every 5 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const handleBookNow = () => {
     // Navigate directly to the booking page without passing any state
@@ -39,23 +58,111 @@ export default function Home() {
   ];
 
   return (
-    <div className={styles.container}>
-      <div className={styles.hero}>
-        <h1 className={styles.title}>Welcome to Flight Booking</h1>
-        <p className={styles.subtitle}>Find and book your perfect flight journey</p>
-        <button onClick={handleBookNow} className={styles.bookButton}>
-          Get Started <FaArrowRight style={{ marginLeft: '8px' }} />
-        </button>
+    <div className={styles.homeContainer}>
+      <div 
+        className={styles.heroSection}
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroImages[currentImageIndex]})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transition: 'background-image 1s ease-in-out'
+        }}
+      >
+        <div className={styles.heroContent}>
+          <h1>Welcome to SkyJourney</h1>
+          <p>Your premium flight booking experience</p>
+          <Link to="/booking" className={styles.bookButton}>
+            Find Flights
+          </Link>
+        </div>
       </div>
 
       <TrendingDeals />
       
       <PopularDestinations />
 
+      <div className={styles.hotelSection}>
+        <h2 className={styles.sectionTitle}>Find Perfect Hotel Accommodations</h2>
+        <p className={styles.sectionDescription}>
+          Discover luxury hotels, budget-friendly options, and unique accommodations worldwide.
+        </p>
+        
+        <div className={styles.hotelPreview}>
+          <div className={styles.hotelCard}>
+            <div className={styles.hotelImageContainer}>
+              <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80" alt="Luxury hotel" />
+              <div className={styles.hotelBadge}>Popular</div>
+            </div>
+            <div className={styles.hotelInfo}>
+              <h3>Luxury Retreats</h3>
+              <p>Experience world-class luxury accommodations</p>
+              <button onClick={() => navigate('/hotels')} className={styles.viewButton}>
+                Explore Hotels
+              </button>
+            </div>
+          </div>
+          
+          <div className={styles.hotelCard}>
+            <div className={styles.hotelImageContainer}>
+              <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80" alt="Budget hotel" />
+              <div className={styles.hotelBadge}>Best Price</div>
+            </div>
+            <div className={styles.hotelInfo}>
+              <h3>Budget Stays</h3>
+              <p>Comfortable accommodations that won't break the bank</p>
+              <button onClick={() => navigate('/hotels')} className={styles.viewButton}>
+                Find Deals
+              </button>
+            </div>
+          </div>
+          
+          <div className={styles.hotelCard}>
+            <div className={styles.hotelImageContainer}>
+              <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80" alt="Boutique hotel" />
+              <div className={styles.hotelBadge}>Exclusive</div>
+            </div>
+            <div className={styles.hotelInfo}>
+              <h3>Boutique Hotels</h3>
+              <p>Unique accommodations with character and charm</p>
+              <button onClick={() => navigate('/hotels')} className={styles.viewButton}>
+                Discover
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.features}>
-        <div className={styles.featuresIntro}>
-          <h2>Looking for the best flight deals to anywhere in the world?</h2>
-          <p>It's easy around here. 100 million travellers use us as their go-to tool, comparing flight deals and offers from more than 1,200 airlines and travel providers. With so many options to choose from in one place, you can say hello to savings, and goodbye to stress – here's how.</p>
+        <div style={{
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          gap: '40px', 
+          maxWidth: '1100px', 
+          margin: '0 auto 40px',
+          padding: '0 20px'
+        }}>
+          <h2 style={{
+            flex: '1',
+            fontSize: '28px',
+            color: '#1e293b',
+            margin: '0',
+            lineHeight: '1.3',
+            minWidth: '300px',
+            maxWidth: '350px',
+            textAlign: 'left'
+          }}>
+            Looking for the best flight deals to anywhere in the world?
+          </h2>
+          <p style={{
+            flex: '1.5',
+            color: '#64748b',
+            lineHeight: '1.6',
+            margin: '0',
+            textAlign: 'left',
+            fontSize: '16px'
+          }}>
+            It's easy around here. 100 million travellers use us as their go-to tool, comparing flight deals and offers from more than 1,200 airlines and travel providers. With so many options to choose from in one place, you can say hello to savings, and goodbye to stress – here's how.
+          </p>
         </div>
 
         <div className={styles.featureCards}>
@@ -72,6 +179,25 @@ export default function Home() {
           <div className={styles.featureCard}>
             <h3>Book when it's best with Price Alerts</h3>
             <p>Found your flight, but not quite ready to book? Set up Price Alerts and we'll let you know when your flight price goes up or down.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.hotelsPromo}>
+        <div className={styles.promoContent}>
+          <h2>Discover Luxury Hotels Worldwide</h2>
+          <p>Find the perfect accommodation for your travel needs, from budget-friendly options to luxury resorts.</p>
+          <button onClick={() => navigate('/hotels')} className={styles.exploreButton}>
+            Explore Hotels <FaArrowRight style={{ marginLeft: '8px' }} />
+          </button>
+        </div>
+        <div className={styles.promoImageGrid}>
+          <div className={styles.promoImageMain}>
+            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80" alt="Luxury hotel" />
+          </div>
+          <div className={styles.promoImageStack}>
+            <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80" alt="Hotel room" />
+            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80" alt="Hotel pool" />
           </div>
         </div>
       </div>
@@ -180,4 +306,6 @@ export default function Home() {
       </footer>
     </div>
   );
-}
+};
+
+export default Home;

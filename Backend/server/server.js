@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const NodeCache = require('node-cache');
 const flightCache = new NodeCache({ stdTTL: 300 }); // 5 minute cache
+const chatbotRoutes = require('./routes/chatbotRoutes');
 
 // Load environment variables from parent directory
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -19,6 +20,8 @@ if (!process.env.DUFFEL_API_KEY && !process.env.DUFFEL_API_TOKEN) {
 const DUFFEL_API_TOKEN = process.env.DUFFEL_API_KEY || process.env.DUFFEL_API_TOKEN;
 
 const app = express();
+const PORT = process.env.PORT || 3002;
+
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'], // Add your frontend URLs
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -59,6 +62,13 @@ duffelAxios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Inside your server.js file
+
+// Other middleware and configuration...
+
+// Mount the chatbot routes
+app.use('/api', chatbotRoutes);
 
 // API routes
 app.get('/api/airports/search', async (req, res) => {
@@ -231,7 +241,13 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Trying port ${PORT + 1}...`);
+    // Handle port in use error
+  } else {
+    console.error('Server error:', err);
+  }
 });

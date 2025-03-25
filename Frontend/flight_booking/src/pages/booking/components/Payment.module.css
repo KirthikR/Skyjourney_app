@@ -526,3 +526,7 @@
     gap: 1rem;
   }
 }
+
+.payment {
+  margin-bottom: 20px;
+}

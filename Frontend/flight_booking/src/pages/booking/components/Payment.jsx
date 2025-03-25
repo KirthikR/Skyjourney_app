@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './PaymentForm.module.css';
+import styles from './Payment.module.css';
 import { FaLock, FaCreditCard, FaPaypal, FaApplePay, FaChevronLeft, FaPlane } from 'react-icons/fa';
 
 export default function PaymentForm() {
@@ -101,10 +101,22 @@ export default function PaymentForm() {
       // Proceed to confirmation
       navigate('/booking/confirmation', {
         state: {
-          selectedOffer,
-          passengers,
-          paymentMethod,
-          paymentConfirmed: true
+          bookingDetails: {
+            bookingId: `BK${Math.floor(Math.random() * 1000000)}`,
+            airline: selectedOffer.owner?.name || 'Airline',
+            departureCode: selectedOffer.slices[0]?.origin?.iata_code || 'N/A',
+            departureCity: selectedOffer.slices[0]?.origin?.city_name || 'Departure City',
+            arrivalCode: selectedOffer.slices[0]?.destination?.iata_code || 'N/A',
+            arrivalCity: selectedOffer.slices[0]?.destination?.city_name || 'Arrival City',
+            departureDate: formatDate(selectedOffer.slices[0]?.segments[0]?.departing_at),
+            departureTime: formatTime(selectedOffer.slices[0]?.segments[0]?.departing_at),
+            arrivalDate: formatDate(selectedOffer.slices[0]?.segments[0]?.arriving_at),
+            arrivalTime: formatTime(selectedOffer.slices[0]?.segments[0]?.arriving_at),
+            passengerName: `${passengers[0]?.firstName || ''} ${passengers[0]?.lastName || ''}`,
+            totalAmount: selectedOffer.total_amount,
+            currency: selectedOffer.total_currency,
+            paymentMethod: paymentMethod
+          }
         }
       });
     } catch (error) {
@@ -364,3 +376,23 @@ export default function PaymentForm() {
     </div>
   );
 }
+
+const formatDate = (isoString) => {
+  if (!isoString) return 'N/A';
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  });
+};
+
+const formatTime = (isoString) => {
+  if (!isoString) return 'N/A';
+  const date = new Date(isoString);
+  return date.toLocaleTimeString('en-US', { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+};
