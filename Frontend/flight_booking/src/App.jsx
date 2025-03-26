@@ -23,6 +23,9 @@ import Concierge from './components/Concierge/Concierge';
 import Signup from './components/Auth/Signup';
 import Login from './components/Auth/Login';
 
+// Add this import
+import CarHire from './components/CarHire/CarHire';
+
 import styles from './styles/App.module.css';
 
 function App() {
@@ -55,6 +58,7 @@ function App() {
             {/* Add this route inside your Routes component */}
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/car-hire" element={<CarHire />} />
           </Routes>
         </div>
       </div>

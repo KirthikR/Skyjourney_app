@@ -43,6 +43,15 @@ const duffelClient = axios.create({
   }
 });
 
+// Fix reference error in getOfferDetails and createOrder functions
+const DUFFEL_API_URL = 'https://api.duffel.com/air';
+const headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Duffel-Version': 'v1',
+  'Authorization': `Bearer ${import.meta.env.VITE_DUFFEL_API_KEY}`
+};
+
 // Search flights using the Duffel API
 export const searchFlights = async (searchParams) => {
   try {
@@ -231,47 +240,48 @@ export async function getOfferDetails(offerId) {
 }
 
 // Create an order (booking)
-export async function createOrder(offerId, passengers) {
+export const createOrder = async (offerId, passengers) => {
   try {
-    const orderParams = {
-      selected_offers: [offerId],
-      passengers: passengers.map(passenger => ({
-        type: passenger.type,
-        title: passenger.title,
-        gender: passenger.gender,
-        given_name: passenger.firstName,
-        family_name: passenger.lastName,
-        born_on: passenger.dateOfBirth,
-        email: passenger.email,
-        phone_number: passenger.phone
-      })),
-      payments: [
-        {
-          type: "balance",
-          currency: "USD",
-          amount: "0"
-        }
-      ]
+    console.log('Creating order for offer:', offerId);
+    
+    // Format passenger data according to Duffel API requirements
+    const formattedPassengers = passengers.map(passenger => ({
+      type: passenger.type,
+      title: passenger.title,
+      gender: passenger.gender === 'male' ? 'male' : 'female',
+      given_name: passenger.firstName,
+      family_name: passenger.lastName,
+      born_on: passenger.dateOfBirth,
+      email: passenger.email,
+      phone_number: passenger.phone
+    }));
+    
+    // Create order request body
+    const orderRequest = {
+      data: {
+        type: "instant",
+        selected_offers: [offerId],
+        passengers: formattedPassengers,
+        payments: [
+          {
+            type: "balance",
+            currency: "USD",
+            amount: "0"
+          }
+        ]
+      }
     };
-
-    const response = await fetch(`${DUFFEL_API_URL}/orders`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ data: orderParams })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Duffel API Error: ${errorData.meta?.status || response.status}`);
-    }
-
-    const orderData = await response.json();
-    return orderData.data;
+    
+    console.log('Order request payload:', orderRequest);
+    
+    // Send to your backend proxy
+    const response = await apiClient.post('/flights/book', orderRequest);
+    return response.data;
   } catch (error) {
-    console.error('Duffel API error:', error);
+    console.error('Order creation error:', error.response?.data || error.message);
     throw error;
   }
-}
+};
 
 // Create booking
 export const createBooking = async (bookingData) => {
@@ -339,7 +349,33 @@ export const bookFlight = async (offerId, passengers) => {
   }
 };
 
+/**
+ * Fetch list of offer requests with pagination support
+ * @param {number} limit - Maximum number of results to return
+ * @param {string} after - Pagination cursor for results after this point
+ * @param {string} before - Pagination cursor for results before this point
+ */
+export const fetchOfferRequests = async (limit = 10, after = null, before = null) => {
+  try {
+    const params = new URLSearchParams();
+    if (limit) params.append('limit', limit);
+    if (after) params.append('after', after);
+    if (before) params.append('before', before);
+    
+    const response = await apiClient.get(`/flights/offer_requests${params.toString() ? '?' + params.toString() : ''}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching offer requests:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 // Export a default API client if needed
 export default {
-  searchFlights
+  searchFlights,
+  searchAirports,
+  getOfferDetails,
+  createOrder,
+  bookFlight,
+  fetchOfferRequests
 };

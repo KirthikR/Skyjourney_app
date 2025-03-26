@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { 
   FaPlane, FaUser, FaBars, FaTimes, FaHome, FaSearch, 
   FaTicketAlt, FaHotel, FaConciergeBell, FaBell, FaGlobeAmericas,
-  FaGoogle, FaFacebook, FaApple, FaLinkedin, FaEnvelope
+  FaGoogle, FaFacebook, FaApple, FaLinkedin, FaEnvelope, FaCar
 } from 'react-icons/fa';
 import styles from '../styles/Navbar.module.css';
 
@@ -101,6 +101,18 @@ const Navbar = () => {
               <span className={styles.navIcon}><FaHotel /></span>
               <span>Hotels</span>
               <span className={styles.newFeature}>NEW</span>
+            </NavLink>
+          </li>
+          <li style={menuItemStyle('/car-hire')}>
+            <NavLink 
+              to="/car-hire" 
+              className={({isActive}) => `${styles.navLink} ${isActive ? styles.activeLink : ''}`}
+            >
+              <span className={styles.navIcon}>
+                <FaCar />
+              </span>
+              <span>Car</span>
+              <span className={styles.luxuryBadge}>Best</span>
             </NavLink>
           </li>
           <li style={menuItemStyle('/concierge')}>

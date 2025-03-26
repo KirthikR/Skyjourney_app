@@ -22,6 +22,7 @@ import {
   FaChevronRight,
   FaChevronLeft
 } from 'react-icons/fa';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import styles from './Hotel.module.css';
 
 const HotelDetails = () => {
@@ -196,6 +197,17 @@ const HotelDetails = () => {
   const getDiscountedPrice = (room) => {
     if (!room.discount) return room.price;
     return room.price - (room.price * room.discount / 100);
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'YOUR_API_KEY_HERE' // Replace with your Google Maps API key
+  });
+
+  // Add a hotel location - for demo purposes
+  const hotelPosition = {
+    lat: 40.7128,
+    lng: -74.0060
   };
   
   return (
@@ -396,6 +408,84 @@ const HotelDetails = () => {
                   <p className={styles.reviewComment}>{review.comment}</p>
                 </div>
               ))}
+            </div>
+          </section>
+
+          <section className={styles.locationSection}>
+            <h2>Location</h2>
+            <div className={styles.mapContainer}>
+              {isLoaded ? (
+                <GoogleMap
+                  mapContainerStyle={{
+                    width: '100%',
+                    height: '400px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+                  }}
+                  center={hotelPosition}
+                  zoom={15}
+                  options={{
+                    disableDefaultUI: false,
+                    zoomControl: true,
+                    mapTypeControl: false,
+                    streetViewControl: true,
+                    fullscreenControl: true,
+                    styles: [
+                      {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
+                      },
+                      {
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
+                      },
+                      {
+                        "featureType": "road.highway",
+                        "elementType": "geometry.fill",
+                        "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
+                      },
+                      {
+                        "featureType": "road.highway",
+                        "elementType": "geometry.stroke",
+                        "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
+                      }
+                    ]
+                  }}
+                >
+                  <Marker
+                    position={hotelPosition}
+                    icon={{
+                      path: "M22-48h-44v43h16l6 5 6-5h16z",
+                      fillColor: '#b8860b',
+                      fillOpacity: 1,
+                      strokeColor: '#ffffff',
+                      strokeWeight: 1,
+                      scale: 0.7,
+                      labelOrigin: new google.maps.Point(0, -25),
+                    }}
+                  />
+                </GoogleMap>
+              ) : (
+                <div className={styles.mapLoading}>
+                  <div className={styles.mapLoadingSpinner}></div>
+                  <p>Loading map...</p>
+                </div>
+              )}
+            </div>
+            <div className={styles.hotelAddress}>
+              <FaMapMarkerAlt />
+              <span>123 Luxury Avenue, {hotel.location}</span>
+            </div>
+            <div className={styles.mapActions}>
+              <button className={styles.mapActionButton}>
+                Get Directions
+              </button>
+              <button className={styles.mapActionButton}>
+                View in Google Maps
+              </button>
             </div>
           </section>
         </div>

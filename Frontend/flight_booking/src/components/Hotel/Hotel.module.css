@@ -196,24 +196,25 @@
 /* Hotel Cards */
 .hotelGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
 }
 
 .hotelCard {
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
   cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .hotelCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  border-color: rgba(184, 134, 11, 0.2);
 }
 
 .hotelImageContainer {
@@ -227,29 +228,48 @@
   object-fit: cover;
 }
 
-.hotelPrice {
+.favoriteButton {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 8px 12px;
-  border-radius: 8px;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  z-index: 2;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.favoriteButton.favorited {
+  color: #e11d48;
+}
+
+.favoriteButton:hover {
+  background: white;
+}
+
+.discountBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #e11d48;
   color: white;
-  text-align: center;
-}
-
-.price {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.night {
   font-size: 12px;
-  opacity: 0.8;
-  display: block;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
 }
 
-.hotelInfo {
+.hotelContent {
   padding: 20px;
 }
 
@@ -257,73 +277,106 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-.hotelHeader h3 {
-  font-size: 18px;
-  color: #1e293b;
+.hotelName {
   margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .hotelRating {
   display: flex;
-  gap: 2px;
-  color: #f59e0b;
+  align-items: center;
+  gap: 4px;
+  background: #b8860b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .hotelLocation {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: #64748b;
+  margin-bottom: 16px;
   font-size: 14px;
-  margin-bottom: 10px;
 }
 
-.hotelDescription {
-  margin-bottom: 15px;
-  color: #475569;
-  font-size: 14px;
-  line-height: 1.5;
+.hotelLocation svg {
+  color: #b8860b;
+  font-size: 12px;
 }
 
 .hotelAmenities {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 15px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.amenityTag {
+.hotelAmenity {
+  color: #64748b;
+  font-size: 16px;
+}
+
+.amenityMore {
+  font-size: 14px;
+  color: #94a3b8;
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: #f8fafc;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  color: #475569;
 }
 
-.amenityText {
-  text-transform: capitalize;
+.hotelPricing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.originalPrice {
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-size: 14px;
+}
+
+.currentPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.night {
+  font-size: 14px;
+  color: #64748b;
 }
 
 .viewDetailsButton {
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
   width: 100%;
+  background: transparent;
+  color: #b8860b;
+  border: 1px solid #b8860b;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.viewDetailsButton:hover {
-  background: #1d4ed8;
+.viewDetailsButton:hover, .buttonHovered {
+  background: #b8860b;
+  color: white;
 }
 
 /* Loading and No Results */
@@ -1436,7 +1489,7 @@
   align-items: center;
   padding: 2rem 1rem;
   position: relative;
-  color: white;
+  color: rgb(15, 15, 15);
 }
 
 .luxuryOverlay {
@@ -3457,4 +3510,457 @@
     flex: 1;
     justify-content: center;
   }
+}
+
+/* Add these styles to your existing CSS file */
+
+/* Luxury Map Container Styles */
+.luxuryMapContainer {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8f9fa;
+  margin-top: 20px;
+}
+
+.mapControls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.fitMapButton {
+  background: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  color: #1e293b;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fitMapButton:hover {
+  background: #f8f9fa;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.mapFilterTabs {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.mapFilterTab {
+  border: none;
+  background: transparent;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mapFilterTab.activeTab {
+  background: #b8860b;
+  color: white;
+}
+
+.mapFilterTab:not(.activeTab):hover {
+  background: #f8f9fa;
+}
+
+.markerPriceLabel {
+  background: #b8860b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mapInfoWindow {
+  width: 320px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.infoImageContainer {
+  position: relative;
+  height: 140px;
+  width: 100%;
+}
+
+.infoImage {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.infoFavoriteButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.infoFavoriteButton.favorited {
+  color: #e11d48;
+  background: white;
+}
+
+.infoDiscountBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #e11d48;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.infoContent {
+  padding: 16px;
+}
+
+.infoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.infoHotelName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.infoRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #b8860b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.infoLocation {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.infoPricing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.infoOriginalPrice {
+  font-size: 13px;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.infoCurrentPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.infoAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.infoNight {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.infoViewButton {
+  width: 100%;
+  background: #b8860b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.infoViewButton:hover {
+  background: #a67c09;
+}
+
+.mapLoading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1e293b;
+  font-weight: 500;
+  z-index: 5;
+}
+
+.mapLoadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #b8860b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.mapListToggle {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.mapHotelsList {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  pointer-events: auto;
+}
+
+.mapHotelCard {
+  width: 200px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.mapHotelCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-color: rgba(184, 134, 11, 0.3);
+}
+
+.mapCardImage {
+  position: relative;
+  height: 100px;
+}
+
+.mapCardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mapCardPrice {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #b8860b;
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.mapCardContent {
+  padding: 12px;
+}
+
+.mapCardContent h4 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mapCardRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #b8860b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mapReviewCount {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.mapViewMoreButton {
+  height: 100%;
+  padding: 0 20px;
+  background: #f8f9fa;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.mapViewMoreButton:hover {
+  background: #f1f5f9;
+  color: #b8860b;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .mapControls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .mapFilterTabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .mapHotelCard {
+    width: 160px;
+  }
+}
+
+/* Add these styles to your existing CSS file */
+
+.locationSection {
+  margin: 40px 0;
+}
+
+.mapContainer {
+  position: relative;
+  margin: 24px 0;
+}
+
+.mapLoading {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.mapLoadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #b8860b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hotelAddress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.hotelAddress svg {
+  color: #b8860b;
+}
+
+.mapActions {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.mapActionButton {
+  padding: 12px 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mapActionButton:hover {
+  background: #f8f9fa;
+  border-color: #b8860b;
+  color: #b8860b;
 }

@@ -14,9 +14,12 @@ import {
   FaMapMarked,
   FaList,
   FaChevronDown,
-  FaHeart
+  FaHeart,
+  FaMap
 } from 'react-icons/fa';
 import styles from './Hotel.module.css';
+import LuxuryHotelMap from './LuxuryHotelMap';
+import * as Geocode from "react-geocode";
 
 const HotelListing = () => {
   const location = useLocation();
@@ -211,7 +214,30 @@ const HotelListing = () => {
     
     setFilteredHotels(filtered);
   }, [priceRange, selectedAmenities, sortBy]);
-  
+
+  const getCoordinates = async (address) => {
+    try {
+      const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
+      );
+      const data = await response.json();
+      
+      if (data.status === 'OK' && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location;
+        return { lat, lng };
+      } else {
+        console.error('Geocoding error:', data.status);
+        // Return default coordinates
+        return { lat: 40.7128, lng: -74.0060 };
+      }
+    } catch (error) {
+      console.error("Error geocoding address:", error);
+      // Return default coordinates as fallback
+      return { lat: 40.7128, lng: -74.0060 };
+    }
+  };
+
   const handleViewHotel = (id) => {
     navigate(`/hotels/details/${id}`);
   };
@@ -454,6 +480,21 @@ const HotelListing = () => {
         </div>
       </div>
       
+      <div className={styles.viewToggle}>
+        <button 
+          className={`${styles.viewButton} ${activeView === 'list' ? styles.activeView : ''}`}
+          onClick={() => setActiveView('list')}
+        >
+          <FaList /> List View
+        </button>
+        <button 
+          className={`${styles.viewButton} ${activeView === 'map' ? styles.activeView : ''}`}
+          onClick={() => setActiveView('map')}
+        >
+          <FaMap /> Map View
+        </button>
+      </div>
+      
       {/* Active Filters Display */}
       {activeFilters.length > 0 && (
         <div className={styles.activeFiltersBar}>
@@ -542,77 +583,59 @@ const HotelListing = () => {
       )}
       
       {/* Main Hotel Listing */}
-      <div className={styles.luxuryHotelsList}>
-        {filteredHotels.map(hotel => (
-          <div 
-            key={hotel.id} 
-            className={styles.luxuryHotelCard}
-            onClick={() => handleViewHotel(hotel.id)}
-            onMouseEnter={() => setHoveredHotel(hotel.id)}
-            onMouseLeave={() => setHoveredHotel(null)}
-          >
-            <div className={styles.hotelImageContainer}>
-              <img src={hotel.image} alt={hotel.name} className={styles.hotelMainImage} />
-              <button 
-                className={`${styles.favoriteButton} ${favorites.includes(hotel.id) ? styles.favorited : ''}`}
-                onClick={(e) => toggleFavorite(hotel.id, e)}
-              >
-                <FaHeart />
-              </button>
-              {hotel.discount && (
-                <div className={styles.discountBadge}>Save {hotel.discount}%</div>
-              )}
-              {hotel.freeCancel && (
-                <div className={styles.freeCancelBadge}>Free Cancellation</div>
-              )}
-            </div>
-            
-            <div className={styles.hotelCardContent}>
-              <div className={styles.hotelMainInfo}>
-                <div className={styles.hotelNameCategory}>
-                  <span className={styles.propertyCategory}>
-                    {hotel.propertyType}
-                  </span>
-                  <h2 className={styles.hotelName}>{hotel.name}</h2>
-                </div>
-                <div className={styles.hotelRatingReviews}>
-                  <div className={styles.ratingDisplay}>
-                    <span className={styles.ratingValue}>{hotel.rating}</span>
-                    <FaStar className={styles.ratingStar} />
+      {activeView === 'list' ? (
+        <div className={styles.hotelGrid}>
+          {filteredHotels.map(hotel => (
+            <div 
+              key={hotel.id}
+              className={styles.hotelCard}
+              onClick={() => handleViewHotel(hotel.id)}
+              onMouseEnter={() => setHoveredHotel(hotel.id)}
+              onMouseLeave={() => setHoveredHotel(null)}
+            >
+              <div className={styles.hotelImageContainer}>
+                <img src={hotel.image} alt={hotel.name} className={styles.hotelImage} />
+                <button 
+                  className={`${styles.favoriteButton} ${favorites.includes(hotel.id) ? styles.favorited : ''}`}
+                  onClick={(e) => toggleFavorite(hotel.id, e)}
+                >
+                  <FaHeart />
+                </button>
+                {hotel.discount && (
+                  <div className={styles.discountBadge}>Save {hotel.discount}%</div>
+                )}
+              </div>
+              <div className={styles.hotelContent}>
+                <div className={styles.hotelHeader}>
+                  <h3 className={styles.hotelName}>{hotel.name}</h3>
+                  <div className={styles.hotelRating}>
+                    <span>{hotel.rating}</span>
+                    <FaStar />
                   </div>
-                  <span className={styles.reviewCount}>({hotel.reviewCount} reviews)</span>
                 </div>
-              </div>
-              
-              <div className={styles.hotelLocation}>
-                <FaMapMarkerAlt className={styles.locationPin} />
-                <span className={styles.locationText}>{hotel.location}</span>
-                <span className={styles.distanceBadge}>{hotel.distance} miles from center</span>
-              </div>
-              
-              <p className={styles.hotelDescription}>{hotel.description}</p>
-              
-              <div className={styles.hotelAmenities}>
-                {hotel.amenities.map((amenity, idx) => (
-                  <div key={idx} className={styles.amenityBadge}>
-                    {getAmenityIcon(amenity)}
-                    <span>{getAmenityName(amenity)}</span>
-                  </div>
-                ))}
-              </div>
-              
-              <div className={styles.hotelCardFooter}>
+                <div className={styles.hotelLocation}>
+                  <FaMapMarkerAlt />
+                  <span>{hotel.location}</span>
+                </div>
+                <div className={styles.hotelAmenities}>
+                  {hotel.amenities.slice(0, 3).map((amenity, index) => (
+                    <div key={index} className={styles.hotelAmenity}>
+                      {getAmenityIcon(amenity)}
+                    </div>
+                  ))}
+                  {hotel.amenities.length > 3 && (
+                    <div className={styles.amenityMore}>+{hotel.amenities.length - 3}</div>
+                  )}
+                </div>
                 <div className={styles.hotelPricing}>
                   {hotel.originalPrice && (
                     <span className={styles.originalPrice}>${hotel.originalPrice}</span>
                   )}
                   <div className={styles.currentPrice}>
-                    <span className={styles.priceAmount}>${hotel.price}</span>
-                    <span className={styles.perNight}>per night</span>
+                    <span className={styles.amount}>${hotel.price}</span>
+                    <span className={styles.night}>per night</span>
                   </div>
-                  <div className={styles.taxesNote}>Includes taxes & fees</div>
                 </div>
-                
                 <button 
                   className={`${styles.viewDetailsButton} ${hoveredHotel === hotel.id ? styles.buttonHovered : ''}`}
                 >
@@ -620,18 +643,15 @@ const HotelListing = () => {
                 </button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-      
-      {/* Map View - Placeholder */}
-      {activeView === 'map' && (
-        <div className={styles.mapViewContainer}>
-          <div className={styles.mapPlaceholder}>
-            <FaMapMarked className={styles.mapIcon} />
-            <p>Interactive map view would be displayed here with hotel locations</p>
-          </div>
+          ))}
         </div>
+      ) : (
+        <LuxuryHotelMap 
+          hotels={filteredHotels}
+          favorites={favorites || []} 
+          toggleFavorite={toggleFavorite} 
+          handleViewHotel={handleViewHotel}
+        />
       )}
       
       {/* "No Results" message if needed */}
