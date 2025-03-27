@@ -26,6 +26,12 @@ import Login from './components/Auth/Login';
 // Add this import
 import CarHire from './components/CarHire/CarHire';
 
+// Add this import at the top with your other imports
+import AboutUs from './components/AboutUs';
+
+// Add this import at the top with your other imports
+import Blog from './components/Blog';
+
 import styles from './styles/App.module.css';
 
 function App() {
@@ -59,6 +65,12 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/car-hire" element={<CarHire />} />
+
+            {/* Add this inside your Routes component */}
+            <Route path="/about" element={<AboutUs />} />
+
+            {/* Add this route inside your <Routes> component */}
+            <Route path="/blog" element={<Blog />} />
           </Routes>
         </div>
       </div>

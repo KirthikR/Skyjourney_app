@@ -1,0 +1,509 @@
+.feedbackButton {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #0a2540, #1e4976);
+  color: white;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  padding: 20px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  writing-mode: vertical-lr;
+  transform-origin: right center;
+}
+
+.feedbackButton:hover {
+  padding-right: 18px;
+  box-shadow: -6px 0 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #0d2c4d, #275892);
+}
+
+.feedbackButtonText {
+  position: relative;
+  padding-bottom: 28px;
+  letter-spacing: 1px;
+}
+
+.feedbackButtonText::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M256 32C114.6 32 0 125.1 0 240c0 47.6 19.9 91.2 52.9 126.3C38 405.7 7 439.1 6.5 439.5c-6.6 7-8.4 17.2-4.6 26S14.4 480 24 480c61.5 0 110-25.7 139.1-46.3C192 442.8 223.2 448 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zm0 368c-26.7 0-53.1-4.1-78.4-12.1l-22.7-7.2-19.5 13.8c-14.3 10.1-33.9 21.4-57.5 29 7.3-12.1 14.4-25.7 19.9-40.2l10.6-28.1-20.6-21.8C69.7 314.1 48 282.2 48 240c0-88.2 93.3-160 208-160s208 71.8 208 160-93.3 160-208 160z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.feedbackOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.feedbackOverlay.closing {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+.feedbackModal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 550px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  animation: slideUp 0.4s ease forwards;
+}
+
+.closing .feedbackModal {
+  animation: slideDown 0.3s ease forwards;
+}
+
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #555;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.closeButton:hover {
+  color: #000;
+}
+
+.feedbackContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.feedbackHeader {
+  text-align: center;
+  padding: 30px 20px 20px;
+  background: linear-gradient(135deg, #0a2540, #1e4976);
+  color: white;
+}
+
+.feedbackHeader h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.feedbackHeader p {
+  margin: 8px 0 20px;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.step {
+  width: 40px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  background-color: white;
+}
+
+.feedbackBody {
+  padding: 30px;
+  flex-grow: 1;
+  min-height: 280px;
+}
+
+.ratingStep,
+.typeStep,
+.detailsStep {
+  animation: fadeIn 0.4s ease;
+}
+
+.ratingStep h3,
+.typeStep h3,
+.detailsStep h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+/* Rating stars styling */
+.starRating {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.starContainer {
+  cursor: pointer;
+  font-size: 36px;
+  color: #ddd;
+  transition: all 0.2s ease;
+  display: flex;
+}
+
+.starContainer:hover {
+  transform: scale(1.1);
+}
+
+.starEmpty {
+  color: #ddd;
+}
+
+.starFilled {
+  color: #ffc107;
+}
+
+.ratingLabels {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  margin-top: 12px;
+}
+
+/* Feedback type cards */
+.feedbackTypeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.feedbackTypeCard {
+  background-color: #f8f9fa;
+  border: 2px solid #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.feedbackTypeCard:hover {
+  background-color: #f1f3f5;
+  transform: translateY(-3px);
+}
+
+.feedbackTypeCard.selected {
+  border-color: #0a2540;
+  background-color: rgba(10, 37, 64, 0.05);
+}
+
+.typeIcon {
+  width: 48px;
+  height: 48px;
+  background-color: #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #0a2540;
+  transition: all 0.2s ease;
+}
+
+.feedbackTypeCard.selected .typeIcon {
+  background-color: #0a2540;
+  color: white;
+}
+
+/* Comment field styling */
+.commentField {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: none;
+  margin-bottom: 20px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.commentField:focus {
+  outline: none;
+  border-color: #0a2540;
+}
+
+.emailField {
+  margin-top: 20px;
+}
+
+.emailField label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.emailField input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.emailField input:focus {
+  outline: none;
+  border-color: #0a2540;
+}
+
+.attachmentOption {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attachButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f1f3f5;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.attachButton:hover {
+  background-color: #e9ecef;
+}
+
+.attachHint {
+  font-size: 13px;
+  color: #999;
+}
+
+/* Footer with buttons */
+.feedbackFooter {
+  padding: 20px 30px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.prevButton,
+.nextButton,
+.submitButton {
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.prevButton {
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.prevButton:hover {
+  background-color: #f1f3f5;
+}
+
+.nextButton {
+  background: linear-gradient(135deg, #0a2540, #1e4976);
+  color: white;
+  border: none;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.nextButton:hover {
+  background: linear-gradient(135deg, #0d2c4d, #275892);
+  transform: translateY(-2px);
+}
+
+.nextButton:disabled,
+.submitButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #0a2540, #1e4976);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0d2c4d, #275892);
+  transform: translateY(-2px);
+}
+
+.submitIcon {
+  font-size: 14px;
+}
+
+/* Success message styling */
+.successMessage {
+  padding: 40px 30px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.successMessage.show {
+  opacity: 1;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.successMessage h2 {
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.successMessage p {
+  color: #666;
+  margin: 0 0 30px;
+}
+
+.loyaltyBonus {
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+  animation: fadeIn 0.5s ease 0.3s forwards;
+  opacity: 0;
+}
+
+.loyaltyBonus h3 {
+  color: #b45309;
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.loyaltyBonus p {
+  color: #92400e;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    transform: scale(0);
+  }
+  to { 
+    transform: scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .feedbackModal {
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .feedbackTypeGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .starRating {
+    gap: 8px;
+  }
+  
+  .starContainer {
+    font-size: 30px;
+  }
+}

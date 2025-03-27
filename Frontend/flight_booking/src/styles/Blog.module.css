@@ -1,0 +1,307 @@
+.blogContainer {
+  max-width: 100%;
+}
+
+.blogHero {
+  position: relative;
+  height: 400px;
+  background-image: url('https://images.unsplash.com/photo-1488085061387-422e29b40080?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+}
+
+.heroContent h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  max-width: 600px;
+}
+
+.blogContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.featuredPost {
+  display: flex;
+  margin-bottom: 4rem;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.featuredImage {
+  flex: 0 0 50%;
+}
+
+.featuredImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featuredText {
+  flex: 0 0 50%;
+  padding: 2.5rem;
+}
+
+.featuredLabel {
+  display: inline-block;
+  background-color: #3a8bff;
+  color: white;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.featuredText h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.postMeta {
+  color: #777;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.postExcerpt {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.readMoreLink {
+  display: inline-block;
+  color: #3a8bff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.readMoreLink:hover {
+  transform: translateX(5px);
+}
+
+.sectionTitle {
+  margin: 2rem 0;
+  font-size: 1.8rem;
+  color: #333;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #3a8bff;
+}
+
+.blogGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.blogCard {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.blogCard:hover {
+  transform: translateY(-5px);
+}
+
+.blogCardImage {
+  position: relative;
+  height: 200px;
+}
+
+.blogCardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blogCategory {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.blogCardContent {
+  padding: 1.5rem;
+}
+
+.blogDate {
+  color: #777;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.blogCardContent h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+.blogExcerpt {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.readMore {
+  color: #3a8bff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.readMore:hover {
+  color: #1f6bff;
+  padding-left: 5px;
+}
+
+.subscribeBanner {
+  margin-top: 4rem;
+  background-color: #f8f8f8;
+  padding: 3rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.subscribeContent h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.subscribeContent p {
+  color: #666;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subscribeForm {
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.subscribeForm input {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 1rem;
+}
+
+.subscribeForm button {
+  background-color: #3a8bff;
+  color: white;
+  border: none;
+  padding: 0 1.5rem;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.subscribeForm button:hover {
+  background-color: #1f6bff;
+}
+
+@media (max-width: 992px) {
+  .featuredPost {
+    flex-direction: column;
+  }
+  
+  .featuredImage, .featuredText {
+    flex: 0 0 100%;
+  }
+  
+  .featuredText {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .blogHero {
+    height: 300px;
+  }
+  
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+  
+  .blogGrid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  
+  .subscribeForm {
+    flex-direction: column;
+  }
+  
+  .subscribeForm input {
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  .subscribeForm button {
+    border-radius: 4px;
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .blogContent {
+    padding: 2rem 1rem;
+  }
+  
+  .featuredText h2 {
+    font-size: 1.5rem;
+  }
+}

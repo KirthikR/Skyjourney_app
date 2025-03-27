@@ -671,6 +671,327 @@
   color: gold;
 }
 
+/* Destination Explorer Section */
+.destinationExplorerSection {
+  padding: 5rem 2rem;
+  background-color: #f8f9fa;
+  position: relative;
+}
+
+.destinationExplorerSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 250px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  z-index: 0;
+}
+
+.destinationSearchWrapper {
+  max-width: 1000px;
+  margin: 2rem auto 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.destinationSearchBox {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.destinationSearchBox:focus-within {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.searchIcon {
+  color: #666;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.destinationSearchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 1rem 0;
+  font-family: inherit;
+}
+
+.advancedSearchButton {
+  background: linear-gradient(135deg, #0a2540, #1a365d);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.advancedSearchButton:hover {
+  background: linear-gradient(135deg, #0d2d4a, #1d3b63);
+  transform: translateY(-2px);
+}
+
+.buttonIcon {
+  font-size: 0.8rem;
+}
+
+.searchHint {
+  text-align: center;
+  color: #666;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.featuredDestinations {
+  margin: 4rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.destinationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.destinationCard {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 280px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.destinationCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.featuredDestination {
+  grid-column: span 2;
+}
+
+.destinationImageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  z-index: 1;
+}
+
+.destinationImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.destinationDetails {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 1.5rem;
+  color: white;
+  z-index: 2;
+  width: 100%;
+}
+
+.destinationDetails h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.destinationDetails p {
+  margin: 0 0 1rem 0;
+  font-weight: 300;
+}
+
+.vehicleCount {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  backdrop-filter: blur(5px);
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  backdrop-filter: blur(5px);
+}
+
+.featuredIcon {
+  color: gold;
+}
+
+.popularDestinations {
+  max-width: 1200px;
+  margin: 4rem auto;
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
+}
+
+.popularDestinations h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.destinationTabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.destinationsTabList {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.destinationTab {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.destinationTab:hover {
+  color: #333;
+}
+
+.activeTab {
+  color: #0a2540;
+  font-weight: 600;
+  position: relative;
+}
+
+.activeTab::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #0a2540;
+}
+
+.destinationsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.destinationLink {
+  color: #333;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.destinationLink:hover {
+  background-color: #f5f5f5;
+  color: #0a2540;
+}
+
+.destinationIcon {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.destinationFeatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.featureCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+}
+
+.featureIcon {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 50%;
+  color: #0a2540;
+  font-size: 1.5rem;
+}
+
+.featureCard h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+.featureCard p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .formRow {
@@ -702,6 +1023,14 @@
   
   .testimonialQuote blockquote {
     font-size: 18px;
+  }
+
+  .featuredDestination {
+    grid-column: span 1;
+  }
+  
+  .destinationsList {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 }
 

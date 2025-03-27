@@ -210,6 +210,27 @@ app.post('/api/bookings', async (req, res) => {
   }
 });
 
+// Flight booking endpoint with proper error handling
+app.post('/api/flights/book', async (req, res) => {
+  try {
+    console.log('Creating order with data:', JSON.stringify(req.body, null, 2));
+    
+    // Send request to Duffel API
+    const response = await duffelAxios.post('/orders', req.body);
+    
+    console.log('Order created successfully:', response.data.data.id);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error creating order:', error.response?.data || error.message);
+    
+    // Return detailed error information
+    res.status(error.response?.status || 500).json({
+      error: 'Failed to create order',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({

@@ -3,7 +3,9 @@ import {
   FaCar, FaMapMarkerAlt, FaCalendarAlt, FaSearch, 
   FaTachometerAlt, FaGasPump, FaCogs, FaUsers, 
   FaSuitcase, FaSnowflake, FaWifi, FaShieldAlt, 
-  FaChevronDown, FaChevronUp, FaStar, FaCheckCircle
+  FaChevronDown, FaChevronUp, FaStar, FaCheckCircle,
+  FaClock, FaChevronRight, FaGlobe, FaHandshake,
+  FaCommentDollar, FaHeadset
 } from 'react-icons/fa';
 import styles from './CarHire.module.css';
 
@@ -483,6 +485,149 @@ const CarHire = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Global Destination Explorer Section */}
+      <div className={styles.destinationExplorerSection}>
+        <div className={styles.sectionHeader}>
+          <h2>Luxury Car Hire by Destination</h2>
+          <p>Discover premium vehicles available at exclusive destinations worldwide</p>
+        </div>
+        
+        <div className={styles.destinationSearchWrapper}>
+          <div className={styles.destinationSearchBox}>
+            <FaSearch className={styles.searchIcon} />
+            <input 
+              type="text" 
+              placeholder="Search any destination..." 
+              className={styles.destinationSearchInput}
+              onChange={(e) => console.log('Search for:', e.target.value)}
+            />
+            <button className={styles.advancedSearchButton}>
+              Explore <FaChevronRight className={styles.buttonIcon} />
+            </button>
+          </div>
+          <p className={styles.searchHint}>We search over 30,000 locations and include major car operators worldwide</p>
+        </div>
+        
+        <div className={styles.featuredDestinations}>
+          <div className={styles.destinationGrid}>
+            {[
+              {
+                name: 'London',
+                image: 'https://images.pexels.com/photos/460672/pexels-photo-460672.jpeg?auto=compress&cs=tinysrgb&w=1200',
+                country: 'United Kingdom',
+                featured: true,
+                vehicles: 52
+              },
+              {
+                name: 'Dubai',
+                image: 'https://images.pexels.com/photos/823696/pexels-photo-823696.jpeg?auto=compress&cs=tinysrgb&w=1200',
+                country: 'United Arab Emirates',
+                featured: true,
+                vehicles: 78
+              },
+              {
+                name: 'Paris',
+                image: 'https://images.pexels.com/photos/532826/pexels-photo-532826.jpeg?auto=compress&cs=tinysrgb&w=1200',
+                country: 'France',
+                featured: false,
+                vehicles: 41
+              },
+              {
+                name: 'Milan',
+                image: 'https://images.pexels.com/photos/3933627/pexels-photo-3933627.jpeg?auto=compress&cs=tinysrgb&w=1200',
+                country: 'Italy',
+                featured: false,
+                vehicles: 35
+              }
+            ].map((destination) => (
+              <div 
+                key={destination.name} 
+                className={`${styles.destinationCard} ${destination.featured ? styles.featuredDestination : ''}`}
+                onClick={() => console.log(`Selected ${destination.name}`)}
+              >
+                <div className={styles.destinationImageOverlay}></div>
+                <img 
+                  src={destination.image} 
+                  alt={destination.name} 
+                  className={styles.destinationImage} 
+                />
+                <div className={styles.destinationDetails}>
+                  <h3>{destination.name}</h3>
+                  <p>{destination.country}</p>
+                  <span className={styles.vehicleCount}>
+                    {destination.vehicles} luxury vehicles
+                  </span>
+                  {destination.featured && (
+                    <div className={styles.featuredBadge}>
+                      <FaStar className={styles.featuredIcon} /> Featured
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className={styles.popularDestinations}>
+          <h3>Popular Destinations</h3>
+          <div className={styles.destinationTabs}>
+            <div className={styles.destinationsTabList}>
+              <button className={`${styles.destinationTab} ${styles.activeTab}`}>Global</button>
+              <button className={styles.destinationTab}>Europe</button>
+              <button className={styles.destinationTab}>Americas</button>
+              <button className={styles.destinationTab}>Middle East</button>
+              <button className={styles.destinationTab}>Asia Pacific</button>
+            </div>
+            
+            <div className={styles.destinationsList}>
+              {[
+                'London', 'Orlando', 'Tirana', 'Alicante', 'Paris', 
+                'Birmingham', 'Dubai', 'Edinburgh', 'Málaga', 'Antalya', 
+                'Manchester', 'Glasgow', 'Faro', 'Lisbon', 'Milan'
+              ].map(city => (
+                <a key={city} href="#" className={styles.destinationLink}>
+                  <FaMapMarkerAlt className={styles.destinationIcon} /> {city} car hire
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className={styles.destinationFeatures}>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>
+              <FaGlobe />
+            </div>
+            <h3>Global Coverage</h3>
+            <p>Access to premium vehicles across 30,000+ locations worldwide</p>
+          </div>
+          
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>
+              <FaHandshake />
+            </div>
+            <h3>Price Guarantee</h3>
+            <p>Best price guaranteed with our price match promise</p>
+          </div>
+          
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>
+              <FaCommentDollar />
+            </div>
+            <h3>No Hidden Fees</h3>
+            <p>Complete transparency with all costs clearly displayed</p>
+          </div>
+          
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>
+              <FaHeadset />
+            </div>
+            <h3>Concierge Support</h3>
+            <p>Dedicated support team for all your luxury car hire needs</p>
           </div>
         </div>
       </div>
