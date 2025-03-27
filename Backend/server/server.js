@@ -241,6 +241,49 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Add this after your other API endpoints but before app.listen()
+
+// List offer requests endpoint
+app.get('/api/flights/offer_requests', async (req, res) => {
+  try {
+    console.log('Getting offer requests list');
+    
+    // Extract pagination parameters from query string
+    const { after, before, limit } = req.query;
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (after) params.append('after', after);
+    if (before) params.append('before', before);
+    if (limit) params.append('limit', limit);
+    
+    // Make request to Duffel API with query parameters
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const response = await duffelAxios.get(`/air/offer_requests${queryString}`);
+    
+    console.log(`Retrieved ${response.data.data.length} offer requests`);
+    
+    // Return the data with same structure as Duffel API
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error getting offer requests:', error.response?.data || error.message);
+    
+    // Detailed error logging
+    if (error.response) {
+      console.error('DUFFEL ERROR RESPONSE:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    }
+
+    res.status(error.response?.status || 500).json({ 
+      error: 'Failed to get offer requests',
+      details: error.response?.data || error.message 
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }).on('error', (err) => {
