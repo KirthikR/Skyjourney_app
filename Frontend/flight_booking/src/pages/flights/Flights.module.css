@@ -996,3 +996,655 @@
   border-radius: 4px;
   margin: 10px 0;
 }
+
+.flightsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.searchSummary {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.searchSummary h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.searchSummary p {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .resultsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filtersPanel {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.flightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.flightCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.flightCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.airlineInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.airlineLogo {
+  width: 50px;
+  height: 50px;
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.airlineName {
+  font-weight: 500;
+}
+
+.flightNumber {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.flightTimes {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.departureTime, .arrivalTime {
+  text-align: center;
+}
+
+.time {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.airport {
+  color: #666;
+}
+
+.flightDuration {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.durationLine {
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.durationLine:before, .durationLine:after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #ddd;
+  border-radius: 50%;
+  top: -2px;
+}
+
+.durationLine:before {
+  left: 0;
+}
+
+.durationLine:after {
+  right: 0;
+}
+
+.stops, .duration {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.flightPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0066ff;
+}
+
+.priceSubtext {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.selectButton {
+  margin-top: 10px;
+  padding: 8px 20px;
+  background-color: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selectButton:hover {
+  background-color: #0055dd;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 100px auto;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #0066ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer, .noResultsContainer {
+  text-align: center;
+  padding: 50px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorContainer h3, .noResultsContainer h3 {
+  color: #e53935;
+  margin-bottom: 15px;
+}
+
+.errorContainer button, .noResultsContainer button {
+  margin-top: 20px;
+  padding: 10px 25px;
+  background-color: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Add these styles to your existing CSS file */
+
+.flightResultsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.resultsTitle {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 2rem;
+}
+
+.searchSummary {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.airport {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.directionIcon {
+  color: #666;
+}
+
+.searchDetails {
+  display: flex;
+  gap: 20px;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.value {
+  font-weight: 500;
+}
+
+.modifyButton {
+  background-color: transparent;
+  border: 1px solid #3a86ff;
+  color: #3a86ff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.modifyButton:hover {
+  background-color: #3a86ff;
+  color: white;
+}
+
+.flightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.flightCard {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flightCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.flightHeader {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.airline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.airlineLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.flightPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3a86ff;
+}
+
+.perPerson {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.flightDetails {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.departure, .arrival {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.time {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.airport {
+  color: #666;
+  margin-top: 4px;
+}
+
+.flightPath {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin: 0 20px;
+}
+
+.duration {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.pathLine {
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.pathLine::before, .pathLine::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #3a86ff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pathLine::before {
+  left: 0;
+}
+
+.pathLine::after {
+  right: 0;
+}
+
+.stopInfo {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.selectButton {
+  width: 100%;
+  padding: 15px;
+  background-color: #3a86ff;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selectButton:hover {
+  background-color: #2a75e0;
+}
+
+.errorContainer, .noResults {
+  text-align: center;
+  padding: 60px 20px;
+  margin: 40px auto;
+  max-width: 600px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorIcon, .noResultsIcon {
+  font-size: 3rem;
+  color: #ff3d3d;
+  margin-bottom: 20px;
+}
+
+.noResultsIcon {
+  color: #3a86ff;
+}
+
+.backButton {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #3a86ff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: #2a75e0;
+}
+
+@media (max-width: 768px) {
+  .searchSummary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .searchDetails {
+    flex-wrap: wrap;
+  }
+  
+  .flightDetails {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .flightPath {
+    width: 100%;
+    margin: 20px 0;
+  }
+}
+
+/* Add these styles if they're not already there */
+
+.flightCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.airline {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+
+.flightNumber {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.flightInfo {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 20px;
+}
+
+.departure, .arrival {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.airport {
+  color: #666;
+}
+
+.flightDuration {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.durationLine {
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+  margin-bottom: 5px;
+}
+
+.duration {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.price {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #2a8df4;
+}
+
+.selectButton {
+  background-color: #2a8df4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selectButton:hover {
+  background-color: #1e70cc;
+}
+
+/* Loading, Error and No Flights containers */
+
+.loadingContainer, .errorContainer, .noFlightsContainer {
+  text-align: center;
+  padding: 50px;
+  margin: 20px auto;
+  max-width: 600px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loadingSpinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2a8df4;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.backToSearch {
+  background-color: #2a8df4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin-top: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.searchSummary {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dateInfo {
+  margin-left: 15px;
+  color: #666;
+}

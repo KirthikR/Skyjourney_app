@@ -1,364 +1,329 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './PaymentForm.module.css';
-import { FaLock, FaCreditCard, FaPaypal, FaApplePay, FaChevronLeft, FaPlane } from 'react-icons/fa';
+import { FaCreditCard, FaArrowLeft, FaArrowRight, FaLock } from 'react-icons/fa';
+import styles from "./PaymentForm.module.css"; // Make sure this file exists!
 
 export default function PaymentForm() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [passengers, setPassengers] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState('creditCard');
-  const [processing, setProcessing] = useState(false);
+  // Add this at the top of your component to debug:
+  useEffect(() => {
+    console.log("PaymentForm mounted with state:", location.state);
+    
+    // Check for proper data
+    if (!location.state) {
+      console.error("No location state in PaymentForm");
+    } else {
+      console.log("Flight data:", location.state.selectedFlight || location.state.flight);
+      console.log("Passengers:", location.state.passengers);
+      console.log("Selected seats:", location.state.selectedSeats);
+    }
+  }, [location.state]);
+
+  // Make sure your component handles both possible prop names:
+  const { 
+    selectedFlight = location.state?.flight || null,  // Handle both names
+    searchParams = {},
+    passengers = [], 
+    order = null,
+    selectedSeats = [] 
+  } = location.state || {};
+  
+  // Log state for debugging
+  useEffect(() => {
+    console.log("PaymentForm mounted with state:", location.state);
+    
+    if (!selectedFlight) {
+      console.warn("No flight data found in state");
+    }
+  }, [location.state, selectedFlight]);
+
+  useEffect(() => {
+    // Check for debug data in sessionStorage
+    const debugData = sessionStorage.getItem('debugPaymentData');
+    if (debugData && (!location.state || !location.state.selectedFlight)) {
+      try {
+        const parsedData = JSON.parse(debugData);
+        // Use this data as if it came from location.state
+        // You'll need to manually set each piece of state
+      } catch (e) {
+        console.error("Failed to parse debug data", e);
+      }
+    }
+  }, [location.state]);
+  
+  // Handle missing data
+  useEffect(() => {
+    // Check if we're missing critical data
+    if (!location.state || !selectedFlight) {
+      setError("Missing booking information. Please start again.");
+      // Optional: redirect back after a delay
+      setTimeout(() => navigate('/booking'), 3000);
+    }
+  }, [location.state, selectedFlight, navigate]);
+  
+  // Form state
+  const [cardName, setCardName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expDate, setExpDate] = useState("");
+  const [cvv, setCvv] = useState("");
   const [formErrors, setFormErrors] = useState({});
   
-  // Payment form state
-  const [paymentDetails, setPaymentDetails] = useState({
-    cardNumber: '',
-    cardName: '',
-    expiryDate: '',
-    cvv: '',
-    saveCard: false
-  });
-  
-  useEffect(() => {
-    // Check if we have the required data
-    if (!location.state?.selectedOffer || !location.state?.passengers) {
-      console.error('Missing booking data, redirecting to search');
-      navigate('/booking');
-      return;
-    }
-    
-    setSelectedOffer(location.state.selectedOffer);
-    setPassengers(location.state.passengers);
-    
-    console.log('Payment page loaded with data:', {
-      offer: location.state.selectedOffer,
-      passengers: location.state.passengers
-    });
-  }, [location.state, navigate]);
-  
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setPaymentDetails({
-      ...paymentDetails,
-      [name]: type === 'checkbox' ? checked : value
-    });
-    
-    // Clear error when user types
-    if (formErrors[name]) {
-      setFormErrors({
-        ...formErrors,
-        [name]: null
-      });
-    }
-  };
-  
-  const validateForm = () => {
-    const errors = {};
-    
-    if (!paymentDetails.cardNumber) {
-      errors.cardNumber = 'Card number is required';
-    } else if (!/^\d{16}$/.test(paymentDetails.cardNumber.replace(/\s/g, ''))) {
-      errors.cardNumber = 'Invalid card number';
-    }
-    
-    if (!paymentDetails.cardName) {
-      errors.cardName = 'Name on card is required';
-    }
-    
-    if (!paymentDetails.expiryDate) {
-      errors.expiryDate = 'Expiry date is required';
-    } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(paymentDetails.expiryDate)) {
-      errors.expiryDate = 'Invalid format (MM/YY)';
-    }
-    
-    if (!paymentDetails.cvv) {
-      errors.cvv = 'CVV is required';
-    } else if (!/^\d{3,4}$/.test(paymentDetails.cvv)) {
-      errors.cvv = 'Invalid CVV';
-    }
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-  
-  const handleSubmit = async (e) => {
+  // Process payment
+  const handleSubmitPayment = (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    // Validate form
+    const errors = {};
+    if (!cardName) errors.cardName = "Card holder name is required";
+    if (!cardNumber || cardNumber.replace(/\s/g, '').length !== 16) 
+      errors.cardNumber = "Valid card number is required";
+    if (!expDate) errors.expDate = "Expiration date is required";
+    if (!cvv || cvv.length !== 3) errors.cvv = "Valid CVV is required";
+    
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
     
-    // Show processing state
-    setProcessing(true);
+    setLoading(true);
     
-    try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    // Add debugging to see what's happening
+    console.log("Processing payment...");
+    
+    // Simulate payment process
+    setTimeout(() => {
+      // Create confirmation data
+      const confirmationData = {
+        bookingId: "BK" + Math.floor(Math.random() * 1000000),
+        bookingDate: new Date().toISOString(),
+        paymentInfo: {
+          cardLast4: cardNumber.slice(-4),
+          paymentDate: new Date().toISOString(),
+          amount: calculateTotalPrice()
+        },
+        // Include all necessary data
+        selectedFlight: selectedFlight,
+        searchParams,
+        passengers,
+        selectedSeats
+      };
       
-      // Proceed to confirmation
-      navigate('/booking/confirmation', {
-        state: {
-          selectedOffer,
-          passengers,
-          paymentMethod,
-          paymentConfirmed: true
-        }
-      });
-    } catch (error) {
-      console.error('Payment error:', error);
-      setFormErrors({
-        ...formErrors,
-        form: 'There was an error processing your payment. Please try again.'
-      });
-      setProcessing(false);
+      console.log("Payment complete, navigating to confirmation with data:", confirmationData);
+      
+      // Try BOTH navigation paths to see which works
+      // First attempt regular navigation:
+      navigate('/booking/confirmation', { state: confirmationData });
+      
+      // If that doesn't work, try this backup approach:
+      // window.location.href = '/booking/confirmation';
+      // sessionStorage.setItem('confirmationData', JSON.stringify(confirmationData));
+    }, 2000);
+  };
+  
+  // Calculate price
+  const calculateTotalPrice = () => {
+    // Get base price from flight with fallbacks
+    let basePrice = 0;
+    
+    if (selectedFlight?.total_amount) {
+      basePrice = parseFloat(selectedFlight.total_amount);
+    } else if (selectedFlight?.price) {
+      basePrice = parseFloat(selectedFlight.price);
+    } else if (selectedFlight?.base_amount) {
+      basePrice = parseFloat(selectedFlight.base_amount);
     }
+    
+    // Add seat prices if any
+    const seatPrice = (selectedSeats || []).reduce((total, seat) => 
+      total + (seat?.price || 0), 0
+    );
+    
+    return basePrice + seatPrice;
   };
   
-  const handleBack = () => {
-    navigate(-1); // Go back to passenger details
+  // Format card number with spaces
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    
+    for (let i = 0; i < match.length; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    
+    return parts.length > 0 ? parts.join(' ') : value;
   };
   
-  if (!selectedOffer) {
+  // Return to previous step
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+  
+  // If we're still loading or there's an error
+  if (error) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
-          <p>Loading payment form...</p>
+        <div className={styles.errorContainer}>
+          <h2>There was a problem</h2>
+          <p>{error}</p>
+          <button 
+            className={styles.backButton} 
+            onClick={() => navigate('/booking')}
+          >
+            Return to Search
+          </button>
         </div>
       </div>
     );
   }
   
-  const primaryPassenger = passengers[0] || {};
-  const totalPassengers = passengers.length;
-  
   return (
     <div className={styles.container}>
-      <button onClick={handleBack} className={styles.backButton} disabled={processing}>
-        <FaChevronLeft /> Back to passenger details
-      </button>
-      
       <div className={styles.header}>
-        <h1>Payment</h1>
-        <p className={styles.subtitle}>Complete your booking by providing payment details</p>
+        <h1>
+          <FaCreditCard className={styles.icon} />
+          Secure Payment
+        </h1>
+        <p>Complete your booking by providing your payment details</p>
       </div>
       
-      <div className={styles.columns}>
-        <div className={styles.paymentColumn}>
-          <div className={styles.securePayment}>
-            <FaLock className={styles.lockIcon} />
-            <span>Secure payment</span>
+      <div className={styles.paymentContainer}>
+        {/* Order Summary */}
+        <div className={styles.orderSummary}>
+          <h3>Booking Summary</h3>
+          
+          <div className={styles.flightInfo}>
+            <div className={styles.route}>
+              {selectedFlight?.origin || selectedFlight?.slices?.[0]?.origin?.iata_code || 'Departure'} → 
+              {selectedFlight?.destination || selectedFlight?.slices?.[0]?.destination?.iata_code || 'Arrival'}
+            </div>
+            <div className={styles.date}>
+              {new Date(selectedFlight?.departureTime || 
+                selectedFlight?.slices?.[0]?.segments?.[0]?.departing_at || 
+                Date.now()).toLocaleDateString()}
+            </div>
+            <div className={styles.passengers}>
+              {passengers?.length || 1} Passenger(s)
+            </div>
           </div>
           
-          <div className={styles.paymentMethodTabs}>
-            <button 
-              className={`${styles.methodTab} ${paymentMethod === 'creditCard' ? styles.active : ''}`}
-              onClick={() => setPaymentMethod('creditCard')}
-            >
-              <FaCreditCard /> Credit Card
-            </button>
-            <button 
-              className={`${styles.methodTab} ${paymentMethod === 'paypal' ? styles.active : ''}`}
-              onClick={() => setPaymentMethod('paypal')}
-            >
-              <FaPaypal /> PayPal
-            </button>
-            <button 
-              className={`${styles.methodTab} ${paymentMethod === 'applePay' ? styles.active : ''}`}
-              onClick={() => setPaymentMethod('applePay')}
-            >
-              <FaApplePay /> Apple Pay
-            </button>
-          </div>
-          
-          {paymentMethod === 'creditCard' && (
-            <form onSubmit={handleSubmit} className={styles.paymentForm}>
-              <div className={styles.formGroup}>
-                <label htmlFor="cardNumber">Card Number*</label>
-                <input
-                  type="text"
-                  id="cardNumber"
-                  name="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={paymentDetails.cardNumber}
-                  onChange={handleInputChange}
-                  maxLength="19"
-                  disabled={processing}
-                  className={formErrors.cardNumber ? styles.inputError : ''}
-                />
-                {formErrors.cardNumber && <div className={styles.errorText}>{formErrors.cardNumber}</div>}
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="cardName">Name on Card*</label>
-                <input
-                  type="text"
-                  id="cardName"
-                  name="cardName"
-                  placeholder="John Smith"
-                  value={paymentDetails.cardName}
-                  onChange={handleInputChange}
-                  disabled={processing}
-                  className={formErrors.cardName ? styles.inputError : ''}
-                />
-                {formErrors.cardName && <div className={styles.errorText}>{formErrors.cardName}</div>}
-              </div>
-              
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="expiryDate">Expiry Date*</label>
-                  <input
-                    type="text"
-                    id="expiryDate"
-                    name="expiryDate"
-                    placeholder="MM/YY"
-                    value={paymentDetails.expiryDate}
-                    onChange={handleInputChange}
-                    maxLength="5"
-                    disabled={processing}
-                    className={formErrors.expiryDate ? styles.inputError : ''}
-                  />
-                  {formErrors.expiryDate && <div className={styles.errorText}>{formErrors.expiryDate}</div>}
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label htmlFor="cvv">CVV*</label>
-                  <input
-                    type="text"
-                    id="cvv"
-                    name="cvv"
-                    placeholder="123"
-                    value={paymentDetails.cvv}
-                    onChange={handleInputChange}
-                    maxLength="4"
-                    disabled={processing}
-                    className={formErrors.cvv ? styles.inputError : ''}
-                  />
-                  {formErrors.cvv && <div className={styles.errorText}>{formErrors.cvv}</div>}
-                </div>
-              </div>
-              
-              <div className={styles.formCheckbox}>
-                <input
-                  type="checkbox"
-                  id="saveCard"
-                  name="saveCard"
-                  checked={paymentDetails.saveCard}
-                  onChange={handleInputChange}
-                  disabled={processing}
-                />
-                <label htmlFor="saveCard">Save card for future bookings</label>
-              </div>
-              
-              {formErrors.form && <div className={styles.formError}>{formErrors.form}</div>}
-              
-              <button 
-                type="submit" 
-                className={styles.paymentButton}
-                disabled={processing}
-              >
-                {processing ? (
-                  <>
-                    <div className={styles.miniSpinner}></div>
-                    Processing...
-                  </>
-                ) : (
-                  `Pay ${selectedOffer.total_currency} ${selectedOffer.total_amount}`
-                )}
-              </button>
-            </form>
-          )}
-          
-          {paymentMethod === 'paypal' && (
-            <div className={styles.alternativePayment}>
-              <p>You'll be redirected to PayPal to complete your payment.</p>
-              <button 
-                className={styles.paymentButton}
-                onClick={handleSubmit}
-                disabled={processing}
-              >
-                {processing ? (
-                  <>
-                    <div className={styles.miniSpinner}></div>
-                    Processing...
-                  </>
-                ) : (
-                  'Continue to PayPal'
-                )}
-              </button>
+          <div className={styles.priceBreakdown}>
+            <div className={styles.priceRow}>
+              <span>Base fare</span>
+              <span>${parseFloat(selectedFlight?.base_amount || selectedFlight?.price || 0).toFixed(2)}</span>
             </div>
-          )}
-          
-          {paymentMethod === 'applePay' && (
-            <div className={styles.alternativePayment}>
-              <p>Complete your purchase with Apple Pay.</p>
-              <button 
-                className={`${styles.paymentButton} ${styles.applePayButton}`}
-                onClick={handleSubmit}
-                disabled={processing}
-              >
-                {processing ? (
-                  <>
-                    <div className={styles.miniSpinner}></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <FaApplePay className={styles.applePayIcon} /> Pay
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </div>
-        
-        <div className={styles.summaryColumn}>
-          <div className={styles.orderSummary}>
-            <h3>Booking Summary</h3>
-            
-            <div className={styles.flightSummary}>
-              <div className={styles.flightRoute}>
-                <FaPlane className={styles.icon} />
+            {selectedSeats && selectedSeats.length > 0 && (
+              <div className={styles.priceRow}>
+                <span>Seat selection</span>
                 <span>
-                  {selectedOffer.slices[0]?.origin?.iata_code || 'N/A'} ⟶ {selectedOffer.slices[0]?.destination?.iata_code || 'N/A'}
-                  {selectedOffer.slices[1] && ` (Round Trip)`}
+                  ${selectedSeats.reduce((sum, seat) => sum + (seat?.price || 0), 0).toFixed(2)}
                 </span>
               </div>
-              <div className={styles.airline}>{selectedOffer.owner?.name || 'Airline'}</div>
+            )}
+            <div className={styles.priceRow}>
+              <span>Taxes & fees</span>
+              <span>${parseFloat(selectedFlight?.tax_amount || 25.00).toFixed(2)}</span>
             </div>
-            
-            <div className={styles.passengersSummary}>
-              <h4>Passengers</h4>
-              <div className={styles.primaryPassenger}>
-                <strong>Primary: </strong>
-                {primaryPassenger.title} {primaryPassenger.firstName} {primaryPassenger.lastName}
-              </div>
-              <div className={styles.totalPassengers}>{totalPassengers} passenger{totalPassengers !== 1 ? 's' : ''}</div>
+            <div className={`${styles.priceRow} ${styles.totalPrice}`}>
+              <span>Total</span>
+              <span>${calculateTotalPrice().toFixed(2)}</span>
             </div>
-            
-            <div className={styles.priceSummary}>
-              <div className={styles.priceRow}>
-                <span>Base fare</span>
-                <span>{selectedOffer.total_currency} {Number(selectedOffer.total_amount) * 0.8}</span>
-              </div>
-              <div className={styles.priceRow}>
-                <span>Taxes & fees</span>
-                <span>{selectedOffer.total_currency} {Number(selectedOffer.total_amount) * 0.2}</span>
-              </div>
-              <div className={`${styles.priceRow} ${styles.priceTotal}`}>
-                <span>Total</span>
-                <span>{selectedOffer.total_currency} {selectedOffer.total_amount}</span>
-              </div>
-            </div>
+          </div>
+        </div>
+        
+        {/* Payment Form */}
+        <div className={styles.paymentForm}>
+          <div className={styles.securePayment}>
+            <FaLock className={styles.lockIcon} /> Secure payment - Your data is encrypted
           </div>
           
-          <div className={styles.securityNote}>
-            <FaLock className={styles.icon} />
-            <p>Your payment information is encrypted and secure. We never store your full credit card details.</p>
-          </div>
+          {error && <div className={styles.formError}>{error}</div>}
+          
+          <form onSubmit={handleSubmitPayment}>
+            <div className={styles.formGroup}>
+              <label htmlFor="cardName">Cardholder Name</label>
+              <input
+                id="cardName"
+                type="text"
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
+                placeholder="Name as it appears on your card"
+              />
+              {formErrors.cardName && <div className={styles.fieldError}>{formErrors.cardName}</div>}
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label htmlFor="cardNumber">Card Number</label>
+              <input
+                id="cardNumber"
+                type="text"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                placeholder="1234 5678 9012 3456"
+                maxLength="19"
+              />
+              {formErrors.cardNumber && <div className={styles.fieldError}>{formErrors.cardNumber}</div>}
+            </div>
+            
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="expDate">Expiration Date</label>
+                <input
+                  id="expDate"
+                  type="text"
+                  value={expDate}
+                  onChange={(e) => setExpDate(e.target.value)}
+                  placeholder="MM/YY"
+                  maxLength="5"
+                />
+                {formErrors.expDate && <div className={styles.fieldError}>{formErrors.expDate}</div>}
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="cvv">CVV</label>
+                <input
+                  id="cvv"
+                  type="text"
+                  value={cvv}
+                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').substring(0, 3))}
+                  placeholder="123"
+                  maxLength="3"
+                />
+                {formErrors.cvv && <div className={styles.fieldError}>{formErrors.cvv}</div>}
+              </div>
+            </div>
+            
+            <div className={styles.checkbox}>
+              <input type="checkbox" id="terms" />
+              <label htmlFor="terms">
+                I agree to the terms & conditions and privacy policy
+              </label>
+            </div>
+            
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                className={styles.backButton}
+                onClick={handleGoBack}
+              >
+                <FaArrowLeft /> Back
+              </button>
+              
+              <button
+                type="submit"
+                className={styles.payButton}
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Complete Payment'}
+                {!loading && <FaArrowRight />}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

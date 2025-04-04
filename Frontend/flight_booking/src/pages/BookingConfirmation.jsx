@@ -9,6 +9,13 @@ const BookingConfirmation = () => {
   const [bookingDetails, setBookingDetails] = useState(null);
   
   useEffect(() => {
+    if (!location.state?.bookingReference) {
+      console.log("No booking reference found, redirecting");
+      navigate('/flights');
+    }
+  }, [location.state, navigate]);
+
+  useEffect(() => {
     // Handle multiple possible data formats
     if (location.state?.bookingDetails) {
       // Use booking details directly if provided

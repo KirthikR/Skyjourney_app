@@ -1,0 +1,71 @@
+.consentBanner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  z-index: 1000;
+  padding: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.consentContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.consentContent h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.consentContent p {
+  margin: 0 0 15px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.consentButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.consentButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.acceptButton {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.acceptButton:hover {
+  background-color: #3e8e41;
+}
+
+.declineButton {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
+
+.declineButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .consentContent {
+    text-align: center;
+  }
+  
+  .consentButtons {
+    justify-content: center;
+  }
+}

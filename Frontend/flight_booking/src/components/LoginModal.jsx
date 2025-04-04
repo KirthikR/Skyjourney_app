@@ -33,6 +33,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     
     try {
       const user = await loginWithEmail(formData.email, formData.password);
+      handleLoginSuccess(user);
       onLoginSuccess(user);
       onClose();
     } catch (err) {
@@ -58,6 +59,25 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
         break;
       default:
         console.error('Unknown provider:', provider);
+    }
+  };
+
+  const handleLoginSuccess = (user) => {
+    // Your existing login success logic
+    
+    // Identify the user in PostHog
+    if (window.posthog) {
+      window.posthog.identify(
+        user.id, // Unique user ID
+        {
+          email: user.email,
+          name: user.name,
+          account_type: user.accountType,
+          signup_date: user.signupDate,
+        }
+      );
+      
+      console.log('User identified in PostHog:', user.id);
     }
   };
 

@@ -1,120 +1,208 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FaChair, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FaChair, FaArrowLeft, FaArrowRight, FaPlaneDeparture } from 'react-icons/fa';
 import styles from './SeatSelection.module.css';
 
-export default function SeatSelection() {
+const SeatSelection = () => {
+  // Get data from location
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // Extract all data with default empty values
+  const { searchParams = {}, passengers = [], order = null } = location.state || {};
+  const flightData = location.state?.flight || null;
+  
+  // Keep other state variables
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  // Get data from previous step
-  const { selectedFlight, searchParams, passengers } = location.state || {};
-  
-  // Generate rows and seats for demonstration
-  const getSeats = () => {
-    // Creating a simple 10 rows x 6 seats layout
-    const rows = [];
-    for (let i = 1; i <= 10; i++) {
-      const row = {
-        rowNumber: i,
-        seats: []
-      };
-      
-      // Add 6 seats per row (A-F)
-      for (let j = 0; j < 6; j++) {
-        const seatLetter = String.fromCharCode(65 + j);
-        const seatNumber = `${i}${seatLetter}`;
-        const isAisle = j === 2 || j === 3;
-        const randomAvailability = Math.random() > 0.2; // 20% chance seat is taken
+  const [passengersList, setPassengersList] = useState([]); 
+  const [flight, setFlight] = useState(flightData); // Initialize with data from location
+
+  // Add this code block right here, after your state declarations
+  // Check if data is present
+  useEffect(() => {
+    if (!location.state?.flight) {
+      console.log("No flight data found, redirecting to flights page");
+      navigate('/flights');
+      return;
+    }
+  }, [location.state, navigate]);
+
+  useEffect(() => {
+    console.log("SeatSelection mounted with state:", location.state);
+    // Check if we received passenger data
+    if (!location.state?.passengers || !Array.isArray(location.state.passengers)) {
+      console.error("Missing passenger data in SeatSelection!");
+    }
+  }, [location.state]);
+
+  // Example seat data - in a real app, this would come from an API
+  const seatMap = {
+    rows: 20,
+    seatsPerRow: 6,
+    aisleAfter: 3, // Aisle after seat C
+    seatLetters: ['A', 'B', 'C', 'D', 'E', 'F'],
+    unavailableSeats: ['3A', '3B', '7C', '8D', '9F', '12A', '12B', '12C', '15D', '15E', '15F'],
+    seatPrice: 9.99
+  };
+
+  useEffect(() => {
+    // Simulate loading flight and passenger data
+    setTimeout(() => {
+      try {
+        // In a real app, you'd get this from location.state or API
+        if (location.state?.flight) {
+          setFlight(location.state.flight);
+        } else {
+          setFlight({
+            flightNumber: 'SJ 123',
+            origin: 'LAX',
+            destination: 'JFK',
+            aircraft: 'Boeing 737-800'
+          });
+        }
         
-        row.seats.push({
-          id: seatNumber,
-          number: seatNumber,
-          isAisle,
-          available: randomAvailability,
-          price: isAisle ? 25 : 20,
-        });
+        if (location.state?.passengers && location.state.passengers.length > 0) {
+          setPassengersList(location.state.passengers);
+        } else {
+          // No fallback data - just show what was entered or nothing
+          console.error("No passenger data available");
+          setError("Missing passenger information. Please go back and enter passenger details.");
+          // You could also redirect back to passenger form
+          // navigate('/booking/passengers');
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load flight or passenger information');
+        setLoading(false);
+      }
+    }, 1000);
+  }, [location]);
+
+  const handleSeatSelection = (seat) => {
+    if (isUnavailable(seat)) return;
+    
+    // Toggle seat selection
+    if (selectedSeats.includes(seat)) {
+      setSelectedSeats(selectedSeats.filter(s => s !== seat));
+    } else {
+      // Check if all passengers have seats already
+      if (selectedSeats.length >= passengersList.length) {
+        // Remove the first selected seat
+        const newSelection = [...selectedSeats.slice(1), seat];
+        setSelectedSeats(newSelection);
+      } else {
+        setSelectedSeats([...selectedSeats, seat]);
+      }
+    }
+  };
+
+  const isUnavailable = (seat) => {
+    return seatMap.unavailableSeats.includes(seat);
+  };
+
+  const isSelected = (seat) => {
+    return selectedSeats.includes(seat);
+  };
+
+  const handleContinueToPayment = () => {
+    // Now using the defined variables from location.state
+    navigate("/booking/payment", { 
+      state: {
+        selectedFlight: flight,
+        searchParams,       // Now properly defined from location.state
+        passengers,         // Same here
+        order,             // Same here
+        selectedSeats      // This comes from your component state
+      }
+    });
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  if (loading) {
+    return <div className={styles.loading}>Loading seat map...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.errorMessage}>{error}</div>;
+  }
+
+  // Generate seat grid
+  const renderSeatMap = () => {
+    const rows = [];
+    
+    for (let i = 1; i <= seatMap.rows; i++) {
+      const rowSeats = [];
+      
+      for (let j = 0; j < seatMap.seatsPerRow; j++) {
+        const seatLetter = seatMap.seatLetters[j];
+        const seatId = `${i}${seatLetter}`;
+        
+        // Add aisle
+        if (j === seatMap.aisleAfter) {
+          rowSeats.push(<div key={`aisle-${i}-${j}`} className={styles.aisle}></div>);
+        }
+        
+        let seatClass = styles.seat;
+        if (isUnavailable(seatId)) {
+          seatClass += ` ${styles.unavailable}`;
+        } else if (isSelected(seatId)) {
+          seatClass += ` ${styles.selected}`;
+        } else {
+          seatClass += ` ${styles.available}`;
+        }
+        
+        rowSeats.push(
+          <div 
+            key={seatId} 
+            className={seatClass} 
+            onClick={() => handleSeatSelection(seatId)}
+          >
+            {seatId}
+          </div>
+        );
       }
       
-      rows.push(row);
+      rows.push(
+        <div key={`row-${i}`} className={styles.row}>
+          {rowSeats}
+        </div>
+      );
     }
     
     return rows;
   };
-  
-  const [seatMap, setSeatMap] = useState(getSeats());
-  
-  // Handle seat selection
-  const handleSeatSelect = (seat) => {
-    if (!seat.available) return;
-    
-    if (selectedSeats.find(s => s.id === seat.id)) {
-      // Deselect seat
-      setSelectedSeats(selectedSeats.filter(s => s.id !== seat.id));
-    } else if (selectedSeats.length < passengers.length) {
-      // Select seat
-      setSelectedSeats([...selectedSeats, seat]);
-    } else {
-      setError(`You can only select ${passengers.length} seats`);
-    }
-  };
-  
-  // Navigate back to passenger details
-  const handleBack = () => {
-    navigate('/booking/passengers', {
-      state: {
-        selectedFlight,
-        searchParams,
-        passengers
-      }
-    });
-  };
-  
-  // Continue to add-ons
-  const handleContinue = () => {
-    if (selectedSeats.length < passengers.length) {
-      setError(`Please select ${passengers.length} seats`);
-      return;
-    }
-    
-    navigate('/booking/confirmation', {
-      state: {
-        selectedFlight,
-        searchParams,
-        passengers,
-        selectedSeats: selectedSeats.map(seat => seat.number)
-      }
-    });
-  };
 
-  // Redirect if no flight selected
-  useEffect(() => {
-    if (!selectedFlight) {
-      navigate('/flights');
+  // Get passenger names for selected seats
+  const getPassengerForSeat = (index) => {
+    if (index < passengersList.length) {
+      const p = passengersList[index];
+      return `${p.details.given_name} ${p.details.family_name}`;
     }
-  }, [selectedFlight, navigate]);
-  
-  if (!selectedFlight || !passengers) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
+    return 'Passenger';
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1><FaChair className={styles.icon} /> Select Your Seats</h1>
-        <p>Choose {passengers.length} seats for your flight</p>
+        <h1>
+          <FaChair className={styles.icon} />
+          Seat Selection
+        </h1>
+        <p>Select seats for your flight from {flight.origin} to {flight.destination}</p>
       </div>
-      
-      {error && <div className={styles.errorMessage}>{error}</div>}
       
       <div className={styles.seatSelectionContainer}>
         <div className={styles.aircraftInfo}>
           <div className={styles.aircraftName}>
-            {selectedFlight.aircraft || 'Boeing 737'}
+            {flight.aircraft} · Flight {flight.flightNumber}
           </div>
+          
           <div className={styles.seatLegend}>
             <div className={styles.legendItem}>
               <div className={`${styles.seat} ${styles.available}`}></div>
@@ -133,55 +221,43 @@ export default function SeatSelection() {
         
         <div className={styles.cabinLayout}>
           <div className={styles.rowLabels}>
-            {seatMap.map(row => (
-              <div key={`row-${row.rowNumber}`} className={styles.rowNumber}>
-                {row.rowNumber}
+            {Array.from({ length: seatMap.rows }, (_, i) => (
+              <div key={`row-label-${i+1}`} className={styles.rowNumber}>
+                {i+1}
               </div>
             ))}
           </div>
           
           <div className={styles.seatMap}>
-            {seatMap.map(row => (
-              <div key={`seats-${row.rowNumber}`} className={styles.row}>
-                {row.seats.map((seat, index) => (
-                  <React.Fragment key={seat.id}>
-                    <div 
-                      className={`
-                        ${styles.seat} 
-                        ${seat.available ? styles.available : styles.unavailable}
-                        ${selectedSeats.find(s => s.id === seat.id) ? styles.selected : ''}
-                      `}
-                      onClick={() => handleSeatSelect(seat)}
-                    >
-                      {seat.number.substring(1)}
-                    </div>
-                    {seat.isAisle && index === 2 && <div className={styles.aisle}></div>}
-                  </React.Fragment>
-                ))}
-              </div>
-            ))}
+            {renderSeatMap()}
           </div>
         </div>
         
         <div className={styles.selectionSummary}>
-          <h3>Your Selection</h3>
+          <h3>Your Seat Selection</h3>
+          
           <div className={styles.selectedSeatsList}>
-            {selectedSeats.length === 0 ? (
-              <p>No seats selected yet</p>
-            ) : (
+            {selectedSeats.length > 0 ? (
               <ul>
                 {selectedSeats.map((seat, index) => (
-                  <li key={seat.id}>
-                    Seat {seat.number} - ${seat.price.toFixed(2)}
+                  <li key={seat}>
+                    Seat {seat} - {getPassengerForSeat(index)}
                   </li>
                 ))}
               </ul>
+            ) : (
+              <p>No seats selected yet</p>
+            )}
+            
+            {passengersList.length > selectedSeats.length && (
+              <p>Please select {passengersList.length - selectedSeats.length} more seat(s)</p>
             )}
           </div>
+          
           <div className={styles.seatTotal}>
-            <span>Total for Seats:</span>
+            <span>Seat Selection Fee:</span>
             <span className={styles.price}>
-              ${selectedSeats.reduce((sum, seat) => sum + seat.price, 0).toFixed(2)}
+              ${(seatMap.seatPrice * selectedSeats.length).toFixed(2)}
             </span>
           </div>
         </div>
@@ -189,21 +265,22 @@ export default function SeatSelection() {
       
       <div className={styles.actionButtons}>
         <button 
-          type="button" 
           className={styles.backButton}
           onClick={handleBack}
         >
-          <FaArrowLeft /> Back to Passenger Details
+          <FaArrowLeft /> Back
         </button>
+        
         <button 
-          type="button" 
           className={styles.continueButton}
-          onClick={handleContinue}
-          disabled={selectedSeats.length !== passengers.length}
+          onClick={handleContinueToPayment}
+          disabled={selectedSeats.length < passengersList.length}
         >
-          Continue to Confirmation <FaArrowRight />
+          Continue to Payment
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default SeatSelection;

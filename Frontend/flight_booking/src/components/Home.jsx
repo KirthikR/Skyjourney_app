@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePostHog } from '../hooks/usePostHog';
 import styles from "../styles/Home.module.css";
 import PopularDestinations from '../components/PopularDestinations';
 import TrendingDeals from '../components/TrendingDeals';
@@ -10,8 +11,9 @@ import {
   FaInstagram, FaFacebook, FaArrowRight, FaGlobeAmericas, 
   FaMoneyBillWave, FaBell 
 } from 'react-icons/fa';
+import { trackUIInteraction } from '../utils/eventTracking';
 
-// Add this after your imports
+// Hero images array
 const heroImages = [
   "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100",
   "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3840&q=100",
@@ -23,7 +25,20 @@ const heroImages = [
 const Home = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showNewFeature, setShowNewFeature] = useState(false);
   const navigate = useNavigate();
+  const { trackEvent } = usePostHog('home');
+
+  // Add this effect to send a test event when the page loads
+  useEffect(() => {
+    // Send a test event to verify PostHog is working
+    trackEvent('page_viewed', {
+      page: 'home',
+      timestamp: new Date().toISOString()
+    });
+    
+    console.log("Test event sent to PostHog");
+  }, []);
 
   // Image rotation
   useEffect(() => {
@@ -32,6 +47,17 @@ const Home = () => {
     }, 5000); // Change image every 5 seconds
     
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Check if feature flag is enabled
+    if (window.posthog) {
+      const isEnabled = window.posthog.isFeatureEnabled('new-search-ui');
+      setShowNewFeature(isEnabled);
+      
+      // Log feature flag evaluation
+      console.log('Feature flag: new-search-ui =', isEnabled);
+    }
   }, []);
 
   const handleBookNow = () => {
@@ -72,6 +98,67 @@ const Home = () => {
     }
   ];
 
+  // Track when users interact with "Find Flights" button
+  const handleFindFlightsClick = () => {
+    console.log("Find Flights clicked, sending event...");
+    
+    try {
+      trackEvent('find_flights_button_clicked', { 
+        source: 'home_hero',
+        position: 'top',
+        timestamp: new Date().toISOString()
+      });
+      console.log("Event sent via direct import");
+    } catch (e) {
+      console.error("Failed to send event via direct import:", e);
+    }
+  };
+  
+  // Track when users click on trending deals
+  const handleTrendingDealClick = (deal) => {
+    trackUIInteraction('trending_deal_click', {
+      dealId: deal.id,
+      destination: deal.destination,
+      price: deal.price
+    });
+  };
+  
+  // Track FAQ interactions
+  const handleFaqClick = (index, question) => {
+    trackUIInteraction('faq_click', {
+      faqIndex: index,
+      faqQuestion: question,
+      newState: activeIndex === index ? 'closed' : 'open'
+    });
+    setActiveIndex(activeIndex === index ? null : index);
+  };
+
+  // Add this function somewhere in your component
+  const handleSearchClick = () => {
+    // Your existing logic
+    
+    // Add this line to track the event
+    trackEvent('search_button_clicked', {
+      page: 'home',
+      timestamp: new Date().toISOString()
+    });
+  };
+
+  useEffect(() => {
+    // Use the imported posthog rather than window.posthog
+    console.log('PostHog import available:', posthog ? true : false);
+    
+    try {
+      // Send test event using the import
+      trackEvent('home_page_viewed', {
+        timestamp: new Date().toISOString()
+      });
+      console.log('Test event sent through direct import');
+    } catch (error) {
+      console.error('Error sending PostHog event:', error);
+    }
+  }, []);
+
   return (
     <div className={styles.homeContainer}>
       <div 
@@ -86,13 +173,17 @@ const Home = () => {
         <div className={styles.heroContent}>
           <h1>Welcome to SkyJourney</h1>
           <p>Your premium flight booking experience</p>
-          <Link to="/booking" className={styles.bookButton}>
+          <Link 
+            to="/booking" 
+            className={styles.bookButton}
+            onClick={handleFindFlightsClick}
+          >
             Find Flights
           </Link>
         </div>
       </div>
 
-      <TrendingDeals />
+      <TrendingDeals onDealClick={handleTrendingDealClick} />
       
       <PopularDestinations />
 
@@ -178,8 +269,9 @@ const Home = () => {
               >
                 <button
                   className={`${styles.faqQuestion} ${activeIndex === index ? styles.active : ''}`}
-                  onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+                  onClick={() => handleFaqClick(index, faq.question)}
                   aria-expanded={activeIndex === index}
+                  data-attr="faq-question-button"
                 >
                   <div className={styles.faqQuestionContent}>
                     <span className={styles.faqQuestionNumber}>{(index + 1).toString().padStart(2, '0')}</span>
@@ -329,9 +421,10 @@ const Home = () => {
           <a href="#" className={`${styles.linkedin}`}>
             <FaLinkedin />
           </a>
-          {/* Add more social links as needed */}
         </div>
       </footer>
+      
+      {/* Debug buttons removed */}
     </div>
   );
 };

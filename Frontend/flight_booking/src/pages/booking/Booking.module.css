@@ -31,6 +31,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem 1rem;
+  padding: 30px 20px;
 }
 
 /* Add overlay for better text contrast */
@@ -48,6 +49,7 @@
     rgba(13, 23, 42, 0.7) 100%
   );
   z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 /* Hero content styling */
@@ -58,6 +60,8 @@
   z-index: 3;
   margin-bottom: 2.5rem;
   animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 2;
+  margin-bottom: 30px;
 }
 
 .heroTitle {
@@ -67,6 +71,10 @@
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
   letter-spacing: -0.5px;
   line-height: 1.1;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .heroSubtitle {
@@ -76,6 +84,10 @@
   margin: 0 auto;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   letter-spacing: 0.5px;
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* ===== SEARCH CONTAINER ===== */
@@ -92,6 +104,11 @@
   background: rgba(255, 255, 255, 0.95);
   overflow: hidden;
   transition: box-shadow 0.4s ease;
+  z-index: 2;
+  border-radius: 12px;
+  padding: 25px;
+  max-width: 1100px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 .searchContainer:hover {
@@ -106,6 +123,8 @@
   width: 100%;
   background-color: #f0f4f9;
   border-bottom: 1px solid var(--border-color);
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .tripTypeButton {
@@ -123,6 +142,11 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+  border: 2px solid #e1e1e1;
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  gap: 10px;
 }
 
 .tripTypeButton:hover {
@@ -134,6 +158,9 @@
   color: var(--primary-color);
   font-weight: 600;
   background: white;
+  border-color: #4a7bff;
+  background: #f0f5ff;
+  color: #0043ce;
 }
 
 .activeTrip::after {
@@ -149,6 +176,7 @@
 
 .tripIcon {
   font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 /* Form layout */
@@ -157,35 +185,69 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  gap: 20px;
 }
 
 .mainSearchGrid {
   display: grid;
   grid-template-columns: 3fr 2fr;
   gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+@media (min-width: 768px) {
+  .mainSearchGrid {
+    grid-template-columns: 3fr 2fr;
+  }
 }
 
 .locationSection {
   display: flex;
   position: relative;
   gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: flex-end;
 }
 
 .dateSection {
   display: flex;
   gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .dateSection {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .optionsSection {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+@media (max-width: 767px) {
+  .optionsSection {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Form fields */
 .formField {
   flex: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .formField label {
@@ -196,6 +258,9 @@
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
 }
 
 /* Input styling */
@@ -213,12 +278,19 @@
   font-size: 1rem;
   color: var(--text-color);
   transition: all 0.3s ease;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
 }
 
 .inputWithIcon input:focus,
 .cabinSelect:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 4px rgba(58, 134, 255, 0.15);
+  outline: none;
+  border-color: #4a7bff;
   outline: none;
 }
 
@@ -229,6 +301,8 @@
   transform: translateY(-50%);
   color: var(--primary-color);
   font-size: 1.2rem;
+  left: 12px;
+  color: #777;
 }
 
 /* Swap button */
@@ -250,11 +324,18 @@
   transition: all 0.4s ease;
   box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
   z-index: 5;
+  align-self: center;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  color: #555;
+  margin-bottom: 15px;
 }
 
 .swapButton:hover {
   transform: translate(-50%, 0) rotate(180deg);
   box-shadow: 0 6px 16px rgba(58, 134, 255, 0.5);
+  background: #ebebeb;
 }
 
 /* Passenger selector */
@@ -270,6 +351,11 @@
   background: white;
   cursor: pointer;
   position: relative;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .passengerInfo {
@@ -280,15 +366,19 @@
 .passengerCount {
   font-weight: 600;
   color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .passengerBreakdown {
   font-size: 0.8rem;
   color: var(--text-light);
+  color: #777;
 }
 
 .dropdownIcon {
   color: var(--primary-color);
+  color: #777;
 }
 
 .passengerDropdown {
@@ -302,6 +392,14 @@
   padding: 1.5rem;
   z-index: 50;
   animation: fadeInDown 0.3s ease;
+  top: 100%;
+  right: 0;
+  left: 0;
+  border: 1px solid #ddd;
+  margin-top: 5px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
 .passengerType {
@@ -310,6 +408,8 @@
   align-items: center;
   padding: 1rem 0;
   border-bottom: 1px solid var(--border-color);
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
 }
 
 .passengerType:last-of-type {
@@ -324,17 +424,20 @@
 .passengerTypeTitle {
   font-weight: 600;
   color: var(--text-color);
+  font-weight: 500;
 }
 
 .passengerTypeSubtitle {
   font-size: 0.8rem;
   color: var(--text-light);
+  color: #777;
 }
 
 .passengerControls {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  gap: 10px;
 }
 
 .passengerButton {
@@ -348,6 +451,12 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .passengerButton:not(:disabled):hover {
@@ -370,6 +479,8 @@
   appearance: none;
   padding-right: 2.5rem;
   cursor: pointer;
+  width: 100%;
+  padding: 12px 40px 12px 40px;
 }
 
 .selectArrow {
@@ -379,6 +490,8 @@
   transform: translateY(-50%);
   color: var(--primary-color);
   pointer-events: none;
+  right: 12px;
+  color: #777;
 }
 
 /* Search button */
@@ -386,6 +499,10 @@
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
 .searchButton {
@@ -404,11 +521,24 @@
   transition: all 0.3s ease;
   font-size: 1.1rem;
   box-shadow: 0 10px 20px rgba(58, 134, 255, 0.3);
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
+  background: #0066ff;
+  font-size: 1rem;
 }
 
 .searchButton:hover {
   transform: translateY(-3px);
   box-shadow: 0 15px 25px rgba(58, 134, 255, 0.4);
+  background: #0052cc;
+}
+
+.searchButton:disabled {
+  background: #a0bfff;
+  cursor: not-allowed;
 }
 
 /* Premium features */
@@ -419,6 +549,10 @@
   margin-top: 2.5rem;
   z-index: 5;
   position: relative;
+  z-index: 2;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
 }
 
 .featureBadge {
@@ -433,6 +567,11 @@
   border-radius: 60px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  gap: 8px;
+  padding: 8px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .featureBadge:hover {
@@ -444,6 +583,7 @@
   color: var(--accent-color);
   font-size: 1.2rem;
   filter: drop-shadow(0 0 8px rgba(255, 158, 0, 0.5));
+  color: #4a7bff;
 }
 
 /* FORM FIELDS - LUXURY UPGRADE */

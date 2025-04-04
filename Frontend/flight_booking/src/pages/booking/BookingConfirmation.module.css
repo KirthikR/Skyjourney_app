@@ -1,0 +1,290 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.successIcon {
+  font-size: 4rem;
+  color: #28a745;
+  margin-bottom: 1rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.bookingInfo {
+  display: flex;
+  justify-content: space-between;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bookingId, .bookingDate {
+  display: flex;
+  flex-direction: column;
+}
+
+.bookingId span, .bookingDate span {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+}
+
+.bookingId strong, .bookingDate strong {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.detailsContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .detailsContainer {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .flightDetails {
+    grid-column: span 2;
+  }
+}
+
+.flightDetails, .passengerDetails, .paymentDetails {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.flightDetails h3, .passengerDetails h3, .paymentDetails h3 {
+  display: flex;
+  align-items: center;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+  color: #333;
+}
+
+.icon {
+  margin-right: 0.5rem;
+  color: #0056b3;
+}
+
+.smallIcon {
+  margin-right: 0.3rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.flightInfo {
+  margin-top: 1rem;
+}
+
+.route {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.airport {
+  text-align: center;
+  width: 100px;
+}
+
+.code {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.city {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.flightLine {
+  flex-grow: 1;
+  position: relative;
+  height: 2px;
+  background: #dee2e6;
+  margin: 0 1rem;
+}
+
+.plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 0 0.5rem;
+  color: #0056b3;
+}
+
+.passengerList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.passenger {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.passenger:last-child {
+  border-bottom: none;
+}
+
+.passengerName {
+  font-weight: 500;
+}
+
+.seatInfo {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.paymentInfo {
+  margin-top: 1rem;
+}
+
+.paymentRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.amount {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #28a745;
+}
+
+.nextSteps {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nextSteps h3 {
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.stepsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.step {
+  display: flex;
+}
+
+.stepNumber {
+  width: 30px;
+  height: 30px;
+  background: #0056b3;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.stepContent h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.stepContent p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.homeButton, .manageButton {
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.homeButton {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.manageButton {
+  background: #0056b3;
+  color: white;
+  border: none;
+}
+
+.homeButton:hover {
+  background: #e9ecef;
+}
+
+.manageButton:hover {
+  background: #004494;
+}
+
+.errorMessage {
+  text-align: center;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorMessage h2 {
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.errorMessage p {
+  margin-bottom: 2rem;
+  color: #666;
+}

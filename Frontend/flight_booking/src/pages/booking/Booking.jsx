@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Booking.module.css';
+import { trackBookingEvent, BOOKING_EVENTS } from '../../utils/analytics';
+import styles from "./Booking.module.css";
 import { 
   FaSearch, 
   FaPlane, 
@@ -11,8 +12,17 @@ import {
   FaUserFriends, 
   FaChevronDown 
 } from 'react-icons/fa';
+import { 
+  trackFlightSearch, 
+  trackItineraryView,
+  trackBookingStart,
+  trackBookingStep,
+  trackBookingComplete,
+  trackBookingAbandoned
+} from "../../utils/eventTracking";
+import flightApi from '../../services/flightApi';
 
-export default function BookingEmergency() {
+const Booking = () => {
   const navigate = useNavigate();
   const [tripType, setTripType] = useState('roundTrip');
   const [origin, setOrigin] = useState('');
@@ -31,6 +41,14 @@ export default function BookingEmergency() {
   const [directOnly, setDirectOnly] = useState(false);
   const [searchProgress, setSearchProgress] = useState(0);
   const [apiUrl] = useState('http://localhost:3002'); // Your backend URL
+  const [bookingState, setBookingState] = useState({
+    started: false,
+    step: 'search', // search -> results -> selection -> passenger_info -> payment -> confirmation
+    startTime: null,
+    flightSelected: null,
+    completed: false
+  });
+  const [searchStatus, setSearchStatus] = useState('idle'); // idle, searching, polling, complete, error
   
   // Calculate total passengers
   const totalPassengers = passengers.adults + passengers.children + passengers.infants;
@@ -64,6 +82,47 @@ export default function BookingEmergency() {
     };
   }, []);
   
+  // Track time spent in booking flow
+  useEffect(() => {
+    if (bookingState.started && !bookingState.completed) {
+      const interval = setInterval(() => {
+        const currentTime = new Date();
+        const startTime = new Date(bookingState.startTime || currentTime);
+        const timeSpentSeconds = Math.floor((currentTime - startTime) / 1000);
+        
+        // Update local state with time spent (optional)
+        setBookingState(prev => ({
+          ...prev,
+          timeSpentSeconds
+        }));
+      }, 5000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [bookingState.started, bookingState.completed, bookingState.startTime]);
+  
+  // Track abandoned bookings when component unmounts
+  useEffect(() => {
+    return () => {
+      if (bookingState.started && !bookingState.completed) {
+        trackBookingAbandoned(bookingState.step, {
+          timeSpentSeconds: bookingState.timeSpentSeconds,
+          origin: origin,
+          destination: destination,
+          selectedFlightId: bookingState.flightSelected?.id
+        });
+      }
+    };
+  }, [bookingState, origin, destination]);
+
+  // Track component view
+  useEffect(() => {
+    // Track when a user visits the search page
+    trackBookingEvent(BOOKING_EVENTS.SEARCH_INITIATED, {
+      source: document.referrer,
+    });
+  }, []);
+  
   // Update passenger count
   const updatePassengerCount = (type, action) => {
     setPassengers(prev => {
@@ -91,164 +150,259 @@ export default function BookingEmergency() {
     });
   };
   
-  // Handle form submission
+  // Update the handleSearch function
   const handleSearch = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent form submission
+    
+    if (!origin || !destination || !departDate || (tripType === 'roundTrip' && !returnDate)) {
+      setError("Please fill in all required fields");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
-    setSearchProgress(0);
-    
-    // Progress simulation
-    const progressInterval = setInterval(() => {
-      setSearchProgress(prev => {
-        if (prev >= 95) {
-          clearInterval(progressInterval);
-          return 95;
-        }
-        return prev + 5;
-      });
-    }, 1000);
+    setSearchProgress(10);
     
     try {
-      // Validate required fields
-      if (!origin || !destination || !departDate) {
-        throw new Error('Please fill in all required fields');
-      }
+      // Start progress simulation
+      const progressInterval = setInterval(() => {
+        setSearchProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 500);
       
-      if (origin === destination) {
-        throw new Error('Origin and destination cannot be the same');
-      }
-      
-      // Format search parameters
-      const formattedParams = {
-        data: {
-          slices: [
-            {
-              origin: origin.toUpperCase(),
-              destination: destination.toUpperCase(),
-              departure_date: departDate
-            }
-          ],
-          passengers: [
-            ...Array(passengers.adults).fill().map(() => ({ type: 'adult' })),
-            ...Array(passengers.children).fill().map(() => ({ type: 'child' })),
-            ...Array(passengers.infants).fill().map(() => ({ type: 'infant_without_seat' }))
-          ],
-          cabin_class: cabinClass.toLowerCase().replace(' ', '_')
-        }
+      // Format search parameters correctly
+      const searchParams = {
+        origin: origin, // Use your actual state variables
+        destination: destination,
+        departure_date: departDate,
+        return_date: tripType === 'roundTrip' ? returnDate : null,
+        adults: passengers.adults,
+        children: passengers.children,
+        infants: passengers.infants,
+        cabin_class: cabinClass.toLowerCase().replace(' ', '_')
       };
       
-      // Add return flight if round trip
-      if (tripType === 'roundTrip' && returnDate) {
-        formattedParams.data.slices.push({
-          origin: destination.toUpperCase(),
-          destination: origin.toUpperCase(),
-          departure_date: returnDate
-        });
-      }
+      console.log("Search params:", searchParams);
       
-      console.log("Searching flights with params:", formattedParams);
+      // Track search event
+      trackFlightSearch(searchParams);
       
+      // This is the correct way to call your API
       try {
-        // Use the mock endpoint for testing if needed
-        // const response = await fetch(`${apiUrl}/api/flights/mock`, {
-        const response = await fetch(`${apiUrl}/api/flights/search`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formattedParams),
-        });
+        // Try the real API first
+        const results = await flightApi.searchFlights(searchParams);
         
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('API Error:', response.status, errorData);
-          throw new Error(`API error ${response.status}: ${JSON.stringify(errorData.error || response.statusText)}`);
-        }
-        
-        const results = await response.json();
-        
-        // Complete progress bar
-        clearInterval(progressInterval);
         setSearchProgress(100);
+        clearInterval(progressInterval);
         
-        console.log('Flight search results:', results);
+        console.log("API results:", results);
         
-        if (!results.data || !Array.isArray(results.data)) {
-          console.error('Invalid API response format:', results);
-          throw new Error('The server returned an invalid response format');
-        }
-        
-        // Navigate to results page with real API data
-        navigate('/flights', { 
-          state: { 
+        // Navigate to results page
+        navigate('/flight-results', {
+          state: {
+            results: results,
             searchParams: {
-              slices: formattedParams.data.slices,
-              passengers: formattedParams.data.passengers,
-              cabin_class: formattedParams.data.cabin_class
-            },
-            results: results.data
-          } 
+              ...searchParams,
+              tripType: tripType,
+              departureDate: departDate,
+              returnDate: returnDate,
+              passengers: totalPassengers,
+              travelClass: cabinClass
+            }
+          }
         });
-      } catch (fetchError) {
-        console.error('Fetch error:', fetchError);
-        throw fetchError;
+      } catch (apiError) {
+        console.error("API Error:", apiError);
+        
+        // Fall back to mock data for demonstration
+        console.log("Falling back to mock data");
+        const mockFlights = generateMockFlightResults(searchParams);
+        
+        navigate('/flight-results', {
+          state: {
+            results: { flights: mockFlights },
+            searchParams: {
+              origin: origin,
+              destination: destination,
+              departureDate: departDate,
+              returnDate: returnDate,
+              passengers: totalPassengers,
+              travelClass: cabinClass,
+              tripType: tripType === 'roundTrip' ? 'roundtrip' : 'oneway'
+            }
+          }
+        });
       }
     } catch (err) {
-      clearInterval(progressInterval);
       console.error("Search error:", err);
-      setError(`We couldn't find any flights: ${err.message}`);
+      setError(`Search failed: ${err.message || "Unknown error"}`);
     } finally {
       setLoading(false);
+      setSearchProgress(100);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  // Add this temporary mock data generator function
+  const generateMockFlightResults = (searchParams) => {
+    const flights = [];
+    const airlines = [
+      { name: 'SkyJourney Airways', code: 'SJ' },
+      { name: 'Blue Horizon', code: 'BH' },
+      { name: 'Global Express', code: 'GX' },
+      { name: 'Atlantic Wings', code: 'AW' }
+    ];
     
-    try {
-      // Format search parameters correctly for Duffel API
-      const searchParams = {
-        slices: [
-          {
-            origin: departureAirport,
-            destination: arrivalAirport,
-            departure_date: departureDate
-          }
-        ],
-        passengers: {
-          adults: parseInt(passengers.adults) || 1,
-          children: parseInt(passengers.children) || 0,
-          infants: parseInt(passengers.infants) || 0
+    // Generate 5-10 mock flights
+    const numFlights = Math.floor(Math.random() * 6) + 5;
+    
+    for (let i = 0; i < numFlights; i++) {
+      const airline = airlines[i % airlines.length];
+      const basePrice = Math.floor(Math.random() * 300) + 150;
+      const durationMinutes = Math.floor(Math.random() * 180) + 60;
+      
+      // Create departure and arrival times
+      const departDate = new Date(searchParams.departure_date);
+      departDate.setHours(7 + i, Math.floor(Math.random() * 50), 0);
+      
+      const arriveDate = new Date(departDate);
+      arriveDate.setMinutes(arriveDate.getMinutes() + durationMinutes);
+      
+      const flight = {
+        id: `mock-flight-${i}`,
+        owner: {
+          name: airline.name,
+          iata_code: airline.code
         },
-        cabinClass: travelClass.toLowerCase()
+        slices: [{
+          origin: {
+            iata_code: searchParams.origin,
+            name: `${searchParams.origin} International Airport`
+          },
+          destination: {
+            iata_code: searchParams.destination,
+            name: `${searchParams.destination} International Airport`
+          },
+          duration: durationMinutes,
+          segments: [{
+            departing_at: departDate.toISOString(),
+            arriving_at: arriveDate.toISOString(),
+            origin: {
+              iata_code: searchParams.origin,
+              name: `${searchParams.origin} International Airport`
+            },
+            destination: {
+              iata_code: searchParams.destination,
+              name: `${searchParams.destination} International Airport`
+            },
+            operating_carrier: {
+              name: airline.name,
+              iata_code: airline.code
+            }
+          }]
+        }],
+        total_amount: basePrice,
+        total_currency: 'USD'
       };
       
-      // Add return flight if roundtrip
-      if (tripType === 'roundtrip' && returnDate) {
-        searchParams.slices.push({
-          origin: arrivalAirport,
-          destination: departureAirport,
-          departure_date: returnDate
+      flights.push(flight);
+    }
+    
+    return flights;
+  };
+
+  const handleFlightSelect = (flight) => {
+    // Track itinerary view/selection
+    trackItineraryView(flight);
+    
+    // Track booking start
+    trackBookingStart(flight);
+    
+    // Update booking state
+    setBookingState({
+      ...bookingState,
+      step: 'passenger_info',
+      flightSelected: flight
+    });
+    
+    // Your existing flight selection logic
+
+    // Track selection event
+    if (window.posthog) {
+      window.posthog.capture('flight_selected', {
+        flightId: flight.id,
+        airline: flight.airline,
+        price: flight.price,
+        origin: flight.origin,
+        destination: flight.destination
+      });
+    }
+  };
+  
+  const handlePassengerInfoSubmit = (passengerData) => {
+    // Track passenger info step completion
+    trackBookingStep('passenger_info_completed', { 
+      passengerCount: passengerData.length
+    });
+    
+    // Update booking state
+    setBookingState({
+      ...bookingState,
+      step: 'payment'
+    });
+    
+    // Your existing passenger info handling logic
+  };
+  
+  const handlePaymentSubmit = (paymentData) => {
+    // Track payment step
+    trackBookingStep('payment_initiated', {
+      paymentMethod: paymentData.method
+    });
+    
+    // Your existing payment processing logic
+    processPayment(paymentData).then(result => {
+      if (result.success) {
+        // Track successful booking
+        trackBookingComplete({
+          id: result.bookingId,
+          amount: result.amount,
+          currency: result.currency,
+          paymentMethod: paymentData.method,
+          passengerCount: bookingState.passengerData?.length || 1,
+          origin: origin,
+          destination: destination
+        });
+        
+        // Update booking state
+        setBookingState({
+          ...bookingState,
+          step: 'confirmation',
+          completed: true
+        });
+
+        // Track booking completion
+        if (window.posthog) {
+          window.posthog.capture('booking_completed', {
+            bookingId: result.bookingId,
+            totalAmount: result.amount,
+            paymentMethod: paymentData.method,
+            passengers: bookingState.passengerData?.length || 1
+          });
+        }
+      } else {
+        // Track payment failure
+        trackBookingAbandoned('payment_failed', {
+          errorCode: result.errorCode,
+          errorMessage: result.errorMessage,
+          timeSpentSeconds: bookingState.timeSpentSeconds
         });
       }
-      
-      console.log('Searching flights with params:', searchParams);
-      
-      // Navigate to flights page with search parameters
-      navigate('/flights', { 
-        state: { 
-          searchParams
-        } 
-      });
-    } catch (error) {
-      console.error('Search error:', error);
-      setError(error.message || 'An error occurred during search');
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
@@ -553,3 +707,5 @@ export default function BookingEmergency() {
     </div>
   );
 }
+
+export default Booking;

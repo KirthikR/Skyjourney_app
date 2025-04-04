@@ -1,238 +1,153 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import PaymentForm from './components/Payment';
+import { trackBookingEvent, BOOKING_EVENTS } from '../../utils/analytics';
 import styles from './BookingProcess.module.css';
 
 const BookingProcess = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [passengerCount, setPassengerCount] = useState(1);
-  const [passengerDetails, setPassengerDetails] = useState([]);
+  const { flight, searchParams, passengers } = location.state || {};
+  
+  const [loading, setLoading] = useState(false);
+  const [bookingComplete, setBookingComplete] = useState(false);
+  const [bookingReference, setBookingReference] = useState('');
   
   useEffect(() => {
-    // Log what we received from the previous page
-    console.log("BookingProcess received state:", location.state);
-    
-    if (!location.state || !location.state.selectedOffer) {
-      setError("No flight selected. Please go back and select a flight.");
-      setLoading(false);
-      return;
+    // Check if we have the necessary data
+    if (!flight || !passengers || passengers.length === 0) {
+      navigate('/booking', { replace: true });
     }
     
-    // Set the selected offer from the location state
-    setSelectedOffer(location.state.selectedOffer);
-    
-    // Set passenger count
-    const count = location.state.passengerCount || 1;
-    setPassengerCount(count);
-    
-    // Initialize passenger details array with empty objects
-    const initialPassengers = Array(count).fill(null).map(() => ({
-      title: '',
-      firstName: '',
-      lastName: '',
-      dateOfBirth: '',
-      email: '',
-      phone: '',
-      nationality: '',
-      passportNumber: '',
-      passportExpiry: ''
-    }));
-    
-    setPassengerDetails(initialPassengers);
-    setLoading(false);
-  }, [location]);
+    // Track payment initiated event
+    if (flight) {
+      trackBookingEvent(BOOKING_EVENTS.PAYMENT_INITIATED, {
+        flight_id: flight.id,
+        total_amount: flight.price * passengers.length
+      });
+    }
+  }, [flight, passengers, navigate]);
   
-  // Function to handle passenger details change
-  const handlePassengerChange = (index, field, value) => {
-    const updatedPassengers = [...passengerDetails];
-    updatedPassengers[index] = {
-      ...updatedPassengers[index],
-      [field]: value
-    };
-    setPassengerDetails(updatedPassengers);
+  // Calculate total price
+  const totalPrice = flight ? flight.price * passengers.length : 0;
+  
+  // Handle payment submission
+  const handlePaymentSubmit = async (paymentDetails) => {
+    setLoading(true);
+    
+    try {
+      // In a real app, you would make an API call to process payment here
+      
+      // For demo purposes, simulate an API call with timeout
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Generate a random booking reference
+      const reference = 'BK' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+      setBookingReference(reference);
+      
+      // Track payment completed event
+      trackBookingEvent(BOOKING_EVENTS.PAYMENT_COMPLETED, {
+        flight_id: flight.id,
+        total_amount: totalPrice,
+        payment_method: paymentDetails.cardType
+      });
+      
+      // Track booking confirmed event
+      trackBookingEvent(BOOKING_EVENTS.BOOKING_CONFIRMED, {
+        flight_id: flight.id,
+        booking_reference: reference,
+        passenger_count: passengers.length
+      });
+      
+      setBookingComplete(true);
+    } catch (error) {
+      console.error('Payment processing error:', error);
+      alert('There was an error processing your payment. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
   
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitting passenger details:", passengerDetails);
-    
-    // Navigate to payment with passenger details and flight info
-    navigate('/booking/payment', {
-      state: {
-        selectedOffer: selectedOffer,
-        passengers: passengerDetails
-      }
-    });
-  };
+  // Redirect to confirmation page after successful booking
+  useEffect(() => {
+    if (bookingComplete && bookingReference) {
+      // Navigate to confirmation page
+      setTimeout(() => {
+        navigate('/confirmation', {
+          state: {
+            flight,
+            passengers,
+            bookingReference,
+            totalPrice
+          }
+        });
+      }, 2000);
+    }
+  }, [bookingComplete, bookingReference, navigate, flight, passengers, totalPrice]);
   
-  // Handle going back
-  const handleBack = () => {
-    navigate(-1);
-  };
-  
-  if (loading) {
-    return <div className={styles.loading}>Loading passenger details form...</div>;
-  }
-  
-  if (error) {
-    return (
-      <div className={styles.error}>
-        <h2>Error</h2>
-        <p>{error}</p>
-        <button onClick={() => navigate('/flights')}>Back to Flights</button>
-      </div>
-    );
+  if (!flight) {
+    return <div className={styles.loading}>Loading...</div>;
   }
   
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Passenger Details</h1>
-      <p className={styles.subtitle}>Please enter the details for all passengers</p>
+    <div className={styles.bookingProcessContainer}>
+      <h2>Complete Your Booking</h2>
       
-      {/* Flight summary */}
-      <div className={styles.flightSummary}>
-        <h2>Flight Summary</h2>
-        <div className={styles.route}>
-          {selectedOffer.slices[0]?.origin?.iata_code || 'Origin'} → 
-          {selectedOffer.slices[0]?.destination?.iata_code || 'Destination'}
+      <div className={styles.bookingSummary}>
+        <h3>Flight Summary</h3>
+        
+        <div className={styles.flightDetails}>
+          <div className={styles.route}>
+            <span className={styles.origin}>{flight.origin}</span>
+            <span className={styles.arrow}>→</span>
+            <span className={styles.destination}>{flight.destination}</span>
+          </div>
+          
+          <div className={styles.flightInfo}>
+            <p><strong>Date:</strong> {new Date(flight.departureTime).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> {flight.departureTime} - {flight.arrivalTime}</p>
+            <p><strong>Airline:</strong> {flight.airline?.name || flight.airline}</p>
+            <p><strong>Flight:</strong> {flight.flightNumber}</p>
+            <p><strong>Class:</strong> {searchParams?.cabinClass}</p>
+          </div>
         </div>
-        <div className={styles.airline}>{selectedOffer.owner?.name || 'Airline'}</div>
-        <div className={styles.price}>
-          {selectedOffer.total_currency} {selectedOffer.total_amount}
+        
+        <div className={styles.passengerSummary}>
+          <h4>Passengers</h4>
+          <ul>
+            {passengers.map((passenger, idx) => (
+              <li key={idx}>
+                {passenger.title} {passenger.firstName} {passenger.lastName} ({passenger.type})
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div className={styles.priceSummary}>
+          <div className={styles.priceRow}>
+            <span>Flight price per person:</span>
+            <span>${flight.price?.toFixed(2)}</span>
+          </div>
+          <div className={styles.priceRow}>
+            <span>Passengers:</span>
+            <span>x {passengers.length}</span>
+          </div>
+          <div className={styles.totalRow}>
+            <span>Total:</span>
+            <span>${totalPrice.toFixed(2)}</span>
+          </div>
         </div>
       </div>
       
-      {/* Passenger form */}
-      <form onSubmit={handleSubmit}>
-        {passengerDetails.map((passenger, index) => (
-          <div key={index} className={styles.passengerForm}>
-            <h3>Passenger {index + 1} {index === 0 ? '(Primary)' : ''}</h3>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor={`title-${index}`}>Title*</label>
-                <select 
-                  id={`title-${index}`}
-                  value={passenger.title}
-                  onChange={(e) => handlePassengerChange(index, 'title', e.target.value)}
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="Mr">Mr</option>
-                  <option value="Mrs">Mrs</option>
-                  <option value="Ms">Ms</option>
-                  <option value="Dr">Dr</option>
-                </select>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor={`firstName-${index}`}>First Name*</label>
-                <input
-                  type="text"
-                  id={`firstName-${index}`}
-                  value={passenger.firstName}
-                  onChange={(e) => handlePassengerChange(index, 'firstName', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor={`lastName-${index}`}>Last Name*</label>
-                <input
-                  type="text"
-                  id={`lastName-${index}`}
-                  value={passenger.lastName}
-                  onChange={(e) => handlePassengerChange(index, 'lastName', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor={`dateOfBirth-${index}`}>Date of Birth*</label>
-                <input
-                  type="date"
-                  id={`dateOfBirth-${index}`}
-                  value={passenger.dateOfBirth}
-                  onChange={(e) => handlePassengerChange(index, 'dateOfBirth', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor={`email-${index}`}>Email*</label>
-                <input
-                  type="email"
-                  id={`email-${index}`}
-                  value={passenger.email}
-                  onChange={(e) => handlePassengerChange(index, 'email', e.target.value)}
-                  required={index === 0} // Required for primary passenger
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor={`phone-${index}`}>Phone*</label>
-                <input
-                  type="tel"
-                  id={`phone-${index}`}
-                  value={passenger.phone}
-                  onChange={(e) => handlePassengerChange(index, 'phone', e.target.value)}
-                  required={index === 0} // Required for primary passenger
-                />
-              </div>
-            </div>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor={`nationality-${index}`}>Nationality*</label>
-                <input
-                  type="text"
-                  id={`nationality-${index}`}
-                  value={passenger.nationality}
-                  onChange={(e) => handlePassengerChange(index, 'nationality', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor={`passportNumber-${index}`}>Passport Number*</label>
-                <input
-                  type="text"
-                  id={`passportNumber-${index}`}
-                  value={passenger.passportNumber}
-                  onChange={(e) => handlePassengerChange(index, 'passportNumber', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor={`passportExpiry-${index}`}>Passport Expiry*</label>
-                <input
-                  type="date"
-                  id={`passportExpiry-${index}`}
-                  value={passenger.passportExpiry}
-                  onChange={(e) => handlePassengerChange(index, 'passportExpiry', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        ))}
-        
-        <div className={styles.actions}>
-          <button type="button" className={styles.backButton} onClick={handleBack}>
-            Back to Flight Details
-          </button>
-          <button type="submit" className={styles.continueButton}>
-            Continue to Payment
-          </button>
-        </div>
-      </form>
+      <div className={styles.paymentSection}>
+        <h3>Payment Details</h3>
+        <PaymentForm 
+          amount={totalPrice} 
+          onSubmit={handlePaymentSubmit} 
+          loading={loading}
+          bookingComplete={bookingComplete}
+        />
+      </div>
     </div>
   );
 };

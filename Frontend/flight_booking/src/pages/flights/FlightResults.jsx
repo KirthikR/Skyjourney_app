@@ -6,14 +6,42 @@ import { FaArrowRight, FaExchangeAlt, FaPlane, FaClock, FaSearch, FaExclamationT
 export default function FlightResults() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [results, setResults] = useState([]);
+  const [searchDetails, setSearchDetails] = useState({}); 
   
   // Get results from location state or use empty array
-  const { results, searchDetails } = location.state || { 
-    results: { data: [] }, 
-    searchDetails: {} 
-  };
+  const { searchParams } = location.state || {};
+
+  // Initialize search details on component mount
+  useEffect(() => {
+    if (searchParams) {
+      setSearchDetails({
+        origin: searchParams.origin || '',
+        destination: searchParams.destination || '',
+        departureDate: searchParams.departDate || new Date().toISOString(),
+        returnDate: searchParams.returnDate,
+        tripType: searchParams.tripType || 'oneway',
+        passengers: `${searchParams.passengers?.adults || 1} Adult${
+          searchParams.passengers?.adults !== 1 ? 's' : ''
+        }${
+          searchParams.passengers?.children 
+            ? `, ${searchParams.passengers?.children} Child${
+                searchParams.passengers?.children !== 1 ? 'ren' : ''
+              }` 
+            : ''
+        }${
+          searchParams.passengers?.infants 
+            ? `, ${searchParams.passengers?.infants} Infant${
+                searchParams.passengers?.infants !== 1 ? 's' : ''
+              }` 
+            : ''
+        }`,
+        travelClass: searchParams.cabinClass || 'Economy'
+      });
+    }
+  }, [searchParams]);
   
   // Verify we have the location state on component mount
   useEffect(() => {
@@ -24,38 +52,64 @@ export default function FlightResults() {
       console.log("Flight results received:", results);
       console.log("Search details:", searchDetails);
     }
-  }, [location.state]);
+  }, [location.state, results, searchDetails]);
+
+  useEffect(() => {
+    console.log("FlightResults component mounted");
+    console.log("Location state:", location.state);
+    
+    if (!location.state || !location.state.results) {
+      console.error("No flight data in location state");
+      setError("No flight search results found. Please try a new search.");
+      setLoading(false);
+      return;
+    }
+    
+    const { results } = location.state;
+    
+    // Handle both data structures (direct flights array or nested in .flights)
+    const flightData = results.flights || results;
+    setResults(flightData);
+    setLoading(false);
+  }, [location]);
   
   // Handle missing data case
+  if (loading) {
+    return <div className={styles.loading}>Loading flights...</div>;
+  }
+
   if (error) {
     return (
-      <div className={styles.errorContainer}>
-        <FaExclamationTriangle className={styles.errorIcon} />
-        <h2>Something went wrong</h2>
+      <div className={styles.error}>
+        <h2>Error</h2>
         <p>{error}</p>
-        <Link to="/booking" className={styles.backButton}>
-          <FaSearch /> New Search
-        </Link>
+        <button 
+          className={styles.backButton}
+          onClick={() => navigate('/booking')}
+        >
+          Back to Search
+        </button>
       </div>
     );
   }
 
-  // Handle no results case
-  if (!results || !results.data || results.data.length === 0) {
+  if (!results || results.length === 0) {
     return (
       <div className={styles.noResults}>
-        <FaPlane className={styles.noResultsIcon} />
-        <h2>No flights found</h2>
-        <p>We couldn't find any flights matching your search criteria.</p>
-        <Link to="/booking" className={styles.backButton}>Try another search</Link>
+        <h2>No Flights Found</h2>
+        <p>We couldn't find any flights matching your criteria.</p>
+        <button 
+          className={styles.backButton}
+          onClick={() => navigate('/booking')}
+        >
+          Try a New Search
+        </button>
       </div>
     );
   }
   
   // Display the search summary
   const renderSearchSummary = () => {
-    if (!searchDetails) return null;
-    
     return (
       <div className={styles.searchSummary}>
         <div className={styles.route}>
@@ -71,13 +125,17 @@ export default function FlightResults() {
         <div className={styles.searchDetails}>
           <div className={styles.detailItem}>
             <span className={styles.label}>Departure:</span>
-            <span className={styles.value}>{new Date(searchDetails.departureDate).toLocaleDateString()}</span>
+            <span className={styles.value}>
+              {new Date(searchDetails.departureDate).toLocaleDateString()}
+            </span>
           </div>
           
           {searchDetails.returnDate && (
             <div className={styles.detailItem}>
               <span className={styles.label}>Return:</span>
-              <span className={styles.value}>{new Date(searchDetails.returnDate).toLocaleDateString()}</span>
+              <span className={styles.value}>
+                {new Date(searchDetails.returnDate).toLocaleDateString()}
+              </span>
             </div>
           )}
           
@@ -94,7 +152,7 @@ export default function FlightResults() {
         
         <button 
           className={styles.modifyButton}
-          onClick={() => navigate('/booking', { state: { prefill: searchDetails } })}
+          onClick={() => navigate('/booking', { state: { prefill: searchParams } })}
         >
           Modify Search
         </button>
@@ -109,60 +167,87 @@ export default function FlightResults() {
       {renderSearchSummary()}
       
       <div className={styles.flightsList}>
-        {results.data.map((flight, index) => (
-          <div key={index} className={styles.flightCard}>
-            <div className={styles.flightHeader}>
-              <div className={styles.airline}>
-                <img 
-                  src={flight.airline.logo || 'https://via.placeholder.com/40'} 
-                  alt={flight.airline.name} 
-                  className={styles.airlineLogo} 
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/40';
-                  }}
-                />
-                <span>{flight.airline.name}</span>
-              </div>
-              <div className={styles.flightPrice}>
-                <span className={styles.price}>${flight.price}</span>
-                <span className={styles.perPerson}>per person</span>
-              </div>
-            </div>
-            
-            <div className={styles.flightDetails}>
-              <div className={styles.departure}>
-                <div className={styles.time}>{flight.departureTime}</div>
-                <div className={styles.airport}>{flight.origin}</div>
+        {(results || []).map((flight, index) => {
+          // Map Duffel API structure to expected display format
+          const departureSegment = flight.slices?.[0]?.segments?.[0] || {};
+          const arrivalSegment = flight.slices?.[0]?.segments?.[flight.slices?.[0]?.segments?.length - 1] || {};
+          
+          const formattedFlight = {
+            id: flight.id,
+            airline: {
+              name: flight.owner?.name || 'Airline',
+              logo: `https://daisycon.io/images/airline/?width=100&height=50&color=ffffff&iata=${flight.owner?.iata_code || 'XX'}`
+            },
+            price: parseFloat(flight.total_amount || 0),
+            origin: departureSegment.origin?.iata_code || flight.slices?.[0]?.origin?.iata_code || 'XXX',
+            destination: arrivalSegment.destination?.iata_code || flight.slices?.[0]?.destination?.iata_code || 'XXX',
+            departureTime: new Date(departureSegment.departing_at || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            arrivalTime: new Date(arrivalSegment.arriving_at || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            duration: `${Math.floor(flight.slices?.[0]?.duration / 60)}h ${flight.slices?.[0]?.duration % 60}m`,
+            stops: (flight.slices?.[0]?.segments?.length || 1) - 1
+          };
+        
+          return (
+            <div key={index} className={styles.flightCard}>
+              <div className={styles.flightHeader}>
+                <div className={styles.airline}>
+                  <img 
+                    src={formattedFlight.airline.logo}
+                    alt={formattedFlight.airline.name} 
+                    className={styles.airlineLogo} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/40?text=Airline';
+                    }}
+                  />
+                  <span>{formattedFlight.airline.name}</span>
+                </div>
+                <div className={styles.flightPrice}>
+                  <span className={styles.price}>${formattedFlight.price.toFixed(2)}</span>
+                  <span className={styles.perPerson}>per person</span>
+                </div>
               </div>
               
-              <div className={styles.flightPath}>
-                <div className={styles.duration}>
-                  <FaClock />
-                  <span>{flight.duration}</span>
+              <div className={styles.flightDetails}>
+                <div className={styles.departure}>
+                  <div className={styles.time}>{formattedFlight.departureTime}</div>
+                  <div className={styles.airport}>{formattedFlight.origin}</div>
                 </div>
-                <div className={styles.pathLine}></div>
-                <div className={styles.stopInfo}>
-                  {flight.stops === 0 ? 'Direct' : `${flight.stops} ${flight.stops === 1 ? 'stop' : 'stops'}`}
+                
+                <div className={styles.flightPath}>
+                  <div className={styles.duration}>
+                    <FaClock />
+                    <span>{formattedFlight.duration}</span>
+                  </div>
+                  <div className={styles.pathLine}></div>
+                  <div className={styles.stopInfo}>
+                    {formattedFlight.stops === 0 ? 'Direct' : `${formattedFlight.stops} ${formattedFlight.stops === 1 ? 'stop' : 'stops'}`}
+                  </div>
+                </div>
+                
+                <div className={styles.arrival}>
+                  <div className={styles.time}>{formattedFlight.arrivalTime}</div>
+                  <div className={styles.airport}>{formattedFlight.destination}</div>
                 </div>
               </div>
               
-              <div className={styles.arrival}>
-                <div className={styles.time}>{flight.arrivalTime}</div>
-                <div className={styles.airport}>{flight.destination}</div>
-              </div>
+              <button 
+                className={styles.selectButton}
+                onClick={() => {
+                  console.log("Selected flight:", flight);
+                  navigate(`/flight/${flight.id}`, { 
+                    state: { 
+                      selectedFlight: flight, 
+                      searchParams: searchParams 
+                    } 
+                  });
+                }}
+              >
+                Select Flight
+              </button>
             </div>
-            
-            <button 
-              className={styles.selectButton}
-              onClick={() => navigate('/checkout', { 
-                state: { selectedFlight: flight, searchDetails } 
-              })}
-            >
-              Select Flight
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

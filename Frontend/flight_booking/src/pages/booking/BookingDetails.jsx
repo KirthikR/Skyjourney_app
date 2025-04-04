@@ -1,75 +1,83 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaPlane, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
+import { FaPlane, FaArrowRight } from 'react-icons/fa';
 import styles from './BookingDetails.module.css';
 
-export default function BookingDetails() {
+const BookingDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [selectedFlight, setSelectedFlight] = useState(null);
+  const [searchParams, setSearchParams] = useState(null);
+
+  useEffect(() => {
+    // Get flight details from location state or localStorage
+    const flightFromState = location.state?.selectedFlight;
+    const paramsFromState = location.state?.searchParams;
+    
+    // Try to get from localStorage if not available in state
+    const storedFlight = localStorage.getItem('selectedFlight') 
+      ? JSON.parse(localStorage.getItem('selectedFlight')) 
+      : null;
+    const storedParams = localStorage.getItem('searchParams')
+      ? JSON.parse(localStorage.getItem('searchParams'))
+      : null;
+    
+    if (flightFromState) {
+      setSelectedFlight(flightFromState);
+      localStorage.setItem('selectedFlight', JSON.stringify(flightFromState));
+    } else if (storedFlight) {
+      setSelectedFlight(storedFlight);
+    } else {
+      // Redirect to flights if no flight data is available
+      navigate('/flights');
+      return;
+    }
+    
+    if (paramsFromState) {
+      setSearchParams(paramsFromState);
+      localStorage.setItem('searchParams', JSON.stringify(paramsFromState));
+    } else if (storedParams) {
+      setSearchParams(storedParams);
+    }
+  }, [location, navigate]);
+
+  const formatTime = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleTimeString(undefined, { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch (e) {
+      return 'N/A';
+    }
+  };
   
-  // Get state data with localStorage fallback
-  const locationState = location.state || {};
-  const storedFlight = localStorage.getItem('selectedFlight') 
-    ? JSON.parse(localStorage.getItem('selectedFlight')) 
-    : null;
-  const storedParams = localStorage.getItem('searchParams')
-    ? JSON.parse(localStorage.getItem('searchParams'))
-    : null;
-  
-  const selectedFlight = locationState.selectedFlight || storedFlight;
-  const searchParams = locationState.searchParams || storedParams;
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleDateString(undefined, { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    } catch (e) {
+      return 'N/A';
+    }
+  };
   
   const handleContinue = () => {
-    // Store data in localStorage for persistence
-    localStorage.setItem('selectedFlight', JSON.stringify(selectedFlight));
-    localStorage.setItem('searchParams', JSON.stringify(searchParams));
+    console.log('Navigating to passenger details with:', selectedFlight);
     
-    // Navigate to passenger details
-    navigate('/booking/passengers', {
-      state: {
-        selectedFlight,
-        searchParams
-      }
+    // Navigate to passenger details with the flight info
+    navigate('/booking/passengers', { 
+      state: { 
+        selectedFlight: selectedFlight,
+        searchParams: searchParams 
+      } 
     });
   };
-  
-  // Format date for display
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short'
-    });
-  };
-  
-  // Format time for display
-  const formatTime = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-  
-  // Redirect if no flight data available (from either location state or localStorage)
-  useEffect(() => {
-    if (!selectedFlight) {
-      console.log('No flight selected, redirecting to flights page');
-      navigate('/flights');
-    }
-  }, [selectedFlight, navigate]);
 
-  // Show loading state until we confirm we have data
   if (!selectedFlight) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Loading booking details...</p>
-      </div>
-    );
+    return <div className={styles.loading}>Loading flight details...</div>;
   }
 
   return (
@@ -80,42 +88,81 @@ export default function BookingDetails() {
       </div>
       
       <div className={styles.flightDetails}>
-        {selectedFlight.slices.map((slice, index) => (
-          <div key={index} className={styles.flightCard}>
+        {/* Add null check for slices array */}
+        {selectedFlight.slices && Array.isArray(selectedFlight.slices) ? (
+          selectedFlight.slices.map((slice, index) => (
+            <div key={index} className={styles.flightCard}>
+              <div className={styles.flightHeader}>
+                <h3>{index === 0 ? 'Outbound Flight' : 'Return Flight'}</h3>
+                <span className={styles.airline}>{selectedFlight.owner?.name || 'Airline'}</span>
+              </div>
+              
+              <div className={styles.flightRoute}>
+                <div className={styles.routePoint}>
+                  <div className={styles.airportCode}>{slice.origin?.iata_code || 'N/A'}</div>
+                  <div className={styles.time}>{formatTime(slice.departing_at)}</div>
+                  <div className={styles.date}>{formatDate(slice.departing_at)}</div>
+                </div>
+                
+                <div className={styles.routeLine}>
+                  <div className={styles.duration}>
+                    {Math.floor((slice.duration || 0) / 60)}h {(slice.duration || 0) % 60}m
+                  </div>
+                  <div className={styles.line}></div>
+                  <FaPlane className={styles.planeIcon} />
+                </div>
+                
+                <div className={styles.routePoint}>
+                  <div className={styles.airportCode}>{slice.destination?.iata_code || 'N/A'}</div>
+                  <div className={styles.time}>{formatTime(slice.arriving_at)}</div>
+                  <div className={styles.date}>{formatDate(slice.arriving_at)}</div>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          // If slice data is not in expected format, show alternative view
+          <div className={styles.flightCard}>
             <div className={styles.flightHeader}>
-              <h3>{index === 0 ? 'Outbound Flight' : 'Return Flight'}</h3>
-              <span className={styles.airline}>{selectedFlight.owner?.name || 'Airline'}</span>
+              <h3>Flight</h3>
+              <span className={styles.airline}>
+                {selectedFlight.airline?.name || selectedFlight.owner?.name || 'Airline'}
+              </span>
             </div>
             
             <div className={styles.flightRoute}>
               <div className={styles.routePoint}>
-                <div className={styles.airportCode}>{slice.origin?.iata_code}</div>
-                <div className={styles.time}>{formatTime(slice.departing_at)}</div>
-                <div className={styles.date}>{formatDate(slice.departing_at)}</div>
+                <div className={styles.airportCode}>{selectedFlight.origin || 'N/A'}</div>
+                <div className={styles.time}>{selectedFlight.departureTime || 'N/A'}</div>
               </div>
               
               <div className={styles.routeLine}>
                 <div className={styles.duration}>
-                  {Math.floor(slice.duration / 60)}h {slice.duration % 60}m
+                  {selectedFlight.duration || 'N/A'}
                 </div>
                 <div className={styles.line}></div>
                 <FaPlane className={styles.planeIcon} />
               </div>
               
               <div className={styles.routePoint}>
-                <div className={styles.airportCode}>{slice.destination?.iata_code}</div>
-                <div className={styles.time}>{formatTime(slice.arriving_at)}</div>
-                <div className={styles.date}>{formatDate(slice.arriving_at)}</div>
+                <div className={styles.airportCode}>{selectedFlight.destination || 'N/A'}</div>
+                <div className={styles.time}>{selectedFlight.arrivalTime || 'N/A'}</div>
               </div>
             </div>
           </div>
-        ))}
+        )}
         
         <div className={styles.priceSection}>
           <h3>Price Summary</h3>
           <div className={styles.priceRow}>
             <span>Base Fare:</span>
-            <span>${parseFloat(selectedFlight.total_amount).toFixed(2)}</span>
+            <span>
+              ${typeof selectedFlight.total_amount !== 'undefined' 
+                ? parseFloat(selectedFlight.total_amount).toFixed(2)
+                : typeof selectedFlight.price !== 'undefined'
+                ? parseFloat(selectedFlight.price).toFixed(2)
+                : '0.00'}
+            </span>
           </div>
           <div className={styles.priceRow}>
             <span>Taxes & Fees:</span>
@@ -123,16 +170,27 @@ export default function BookingDetails() {
           </div>
           <div className={styles.totalRow}>
             <span>Total:</span>
-            <span>${parseFloat(selectedFlight.total_amount).toFixed(2)}</span>
+            <span>
+              ${typeof selectedFlight.total_amount !== 'undefined' 
+                ? parseFloat(selectedFlight.total_amount).toFixed(2)
+                : typeof selectedFlight.price !== 'undefined'
+                ? parseFloat(selectedFlight.price).toFixed(2)
+                : '0.00'}
+            </span>
           </div>
         </div>
       </div>
       
       <div className={styles.actions}>
-        <button onClick={handleContinue} className={styles.continueButton}>
+        <button 
+          onClick={handleContinue} 
+          className={styles.continueButton}
+        >
           Continue to Passenger Details <FaArrowRight />
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default BookingDetails;

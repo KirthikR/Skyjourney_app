@@ -1,0 +1,389 @@
+.passengerCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  margin-bottom: 32px;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.passengerCard:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.passengerHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.passengerIcon {
+  background: linear-gradient(135deg, #3a86ff, #4dabff);
+  color: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 16px;
+  font-size: 18px;
+}
+
+.passengerHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.passengerIndex {
+  background-color: #f8f9fa;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  margin-right: 12px;
+  color: #3a86ff;
+  font-weight: 700;
+}
+
+.passengerTypeLabel {
+  font-weight: 500;
+  color: #333;
+}
+
+.headerBadge {
+  margin-left: auto;
+  background-color: #e9f5ff;
+  color: #0061f2;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.formSection {
+  margin-bottom: 24px;
+  background-color: #fcfcfc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  user-select: none;
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.sectionHeader:hover {
+  background-color: #f0f4f8;
+}
+
+.sectionHeader h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionIcon {
+  color: #3a86ff;
+}
+
+.sectionContent {
+  padding: 20px;
+  background-color: #ffffff;
+  border-top: 1px solid #f0f0f0;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px 16px;
+}
+
+.formField {
+  flex: 1 1 30%;
+  min-width: 240px;
+  padding: 0 10px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.formField label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.required {
+  color: #ff3b30;
+  margin-left: 2px;
+}
+
+.inputContainer {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  background-color: #fff;
+}
+
+.inputContainer:hover {
+  border-color: #bdbdbd;
+}
+
+.inputContainer.focused {
+  border-color: #3a86ff;
+  box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.1);
+}
+
+.inputContainer.invalid {
+  border-color: #ff3b30;
+  box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.1);
+}
+
+.inputContainer input,
+.inputContainer select,
+.inputContainer textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #333;
+}
+
+.inputContainer textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.inputContainer select {
+  appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.inputIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #757575;
+  font-size: 16px;
+}
+
+.inputContainer input:focus + .inputIcon,
+.inputContainer.focused .inputIcon {
+  color: #3a86ff;
+}
+
+.inputContainer input:focus::placeholder {
+  color: #bdbdbd;
+}
+
+.errorMessage {
+  color: #ff3b30;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s;
+  position: relative;
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"]:checked {
+  border-color: #3a86ff;
+  background-color: #3a86ff;
+}
+
+.checkbox input[type="checkbox"]:checked::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox:hover input[type="checkbox"] {
+  border-color: #bdbdbd;
+}
+
+.labelWithTooltip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  color: #757575;
+  font-size: 14px;
+}
+
+.tooltip .tooltipText {
+  visibility: hidden;
+  width: 150px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+  font-weight: normal;
+  pointer-events: none;
+}
+
+.tooltip .tooltipText::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
+.completionStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.statusIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.validIcon {
+  color: #34c759;
+  font-size: 16px;
+  background-color: rgba(52, 199, 89, 0.1);
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.incompleteIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 149, 0, 0.1);
+  border-radius: 50%;
+  color: #ff9500;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.statusText {
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    flex-direction: column;
+  }
+  
+  .formField {
+    min-width: 100%;
+  }
+  
+  .passengerCard {
+    padding: 16px;
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(58, 134, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0);
+  }
+}
+
+.inputContainer.focused.invalid {
+  animation: pulse 1.5s infinite;
+}

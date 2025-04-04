@@ -1,278 +1,230 @@
 import axios from 'axios';
 
-// IMPORTANT: Set this to false to use the real Duffel API
-const USE_MOCK_DATA = false;
+// Create a dedicated axios instance for Duffel
+const duffelApi = axios.create({
+  baseURL: 'https://api.duffel.com/air',
+  timeout: 60000, // 60 seconds
+  headers: {
+    'Authorization': `Bearer ${import.meta.env.VITE_DUFFEL_API_KEY}`,
+    'Duffel-Version': 'v1',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
 
-// Search flights using the Duffel API
-export const searchFlights = async (searchParams) => {
-  try {
-    console.log('Searching flights with params:', searchParams);
-    
-    if (USE_MOCK_DATA) {
-      console.log('Using mock data instead of real API call');
-      return getMockFlights(searchParams);
+// The URL of your backend server
+const BACKEND_URL = 'http://localhost:3002'; // Make sure this matches your server port
+
+// Update your API headers
+const headers = {
+  'Authorization': `Bearer ${import.meta.env.VITE_DUFFEL_API_KEY}`,  // CHANGED
+  'Duffel-Version': '2022-01-01',  // Use the correct version
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+};
+
+// Add retry capabilities
+const callWithRetry = async (apiCall, maxRetries = 2) => {
+  let lastError;
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await apiCall();
+    } catch (error) {
+      console.error(`API call failed (attempt ${i+1}/${maxRetries+1}):`, error);
+      lastError = error;
+      
+      // Only wait if we're going to retry
+      if (i < maxRetries) {
+        await new Promise(r => setTimeout(r, 2000 * (i + 1))); // Exponential backoff
+      }
     }
+  }
+  throw lastError;
+};
+
+const searchFlights = async (searchParams) => {
+  try {
+    console.log("Starting flight search with Duffel API:", searchParams);
     
-    // Format passengers for Duffel API
+    // Format passenger data for Duffel
     const passengers = [];
-    
-    // Add adult passengers
-    for (let i = 0; i < (searchParams.passengers?.adults || 1); i++) {
+    for (let i = 0; i < (parseInt(searchParams.adults) || 1); i++) {
       passengers.push({ type: 'adult' });
     }
     
-    // Add child passengers if any
-    if (searchParams.passengers?.children) {
-      for (let i = 0; i < searchParams.passengers.children; i++) {
-        passengers.push({ type: 'child' });
-      }
-    }
-    
-    // Add infant passengers if any
-    if (searchParams.passengers?.infants) {
-      for (let i = 0; i < searchParams.passengers.infants; i++) {
-        passengers.push({ type: 'infant_in_seat' });
-      }
-    }
-    
-    // Create proper Duffel API request format
-    const requestBody = {
+    // Create payload for Duffel
+    const payload = {
       data: {
-        slices: searchParams.slices.map(slice => ({
-          origin: slice.origin,
-          destination: slice.destination,
-          departure_date: slice.departure_date
-        })),
+        slices: [{
+          origin: searchParams.origin,
+          destination: searchParams.destination,
+          departure_date: searchParams.departure_date
+        }],
         passengers: passengers,
-        cabin_class: searchParams.cabinClass || 'economy'
+        cabin_class: searchParams.cabin_class || "economy",
+        return_offers: true
       }
     };
     
-    console.log('Duffel API request payload:', requestBody);
-    
-    // Use the main simplified API endpoint
-    const response = await axios.post('http://localhost:3002/api/flights/search', {
-      slices: requestBody.data.slices,
-      passengers: requestBody.data.passengers,
-      cabin_class: requestBody.data.cabin_class
-    });
-    
-    console.log('Duffel API response:', response.data);
-    
-    return { data: response.data.data };
-  } catch (error) {
-    console.error('Duffel API error:', error);
-    
-    if (error.response?.status === 422) {
-      // Get validation error details for better debugging
-      console.error('Validation error details:', error.response.data);
-      
-      // If there's a validation error, you can check the specific fields
-      const errorMsg = error.response.data.details?.meta?.errors
-        ? error.response.data.details.meta.errors.map(e => e.message).join(', ')
-        : 'Invalid search parameters';
-        
-      throw new Error(`Validation error: ${errorMsg}`);
+    if (searchParams.return_date) {
+      payload.data.slices.push({
+        origin: searchParams.destination,
+        destination: searchParams.origin,
+        departure_date: searchParams.return_date
+      });
     }
     
-    throw new Error(error.message || 'Failed to fetch flights');
+    const apiKey = import.meta.env.VITE_DUFFEL_API_KEY;
+    console.log("Using API key (first few chars):", apiKey?.substring(0, 5) + "...");
+    
+    // Step 1: Create offer request with proxy
+    const offerRequestResponse = await axios.post(
+      '/api/duffel/air/offer_requests', 
+      payload,
+      {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Duffel-Version': 'v1',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        timeout: 60000
+      }
+    );
+    
+    const offerId = offerRequestResponse.data.data.id;
+    console.log("Offer request created:", offerId);
+    
+    // Step 2: Get offers with proxy
+    const offersResponse = await axios.get(
+      `/api/duffel/air/offers?offer_request_id=${offerId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Duffel-Version': 'v1',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        timeout: 60000
+      }
+    );
+    
+    const offers = offersResponse.data.data;
+    console.log(`Found ${offers.length} offers`);
+    
+    return { flights: offers };
+  } catch (error) {
+    console.error("API ERROR:", error);
+    if (error.response) {
+      console.error("Response data:", error.response.data);
+      console.error("Status:", error.response.status);
+    }
+    throw error;
   }
-};
+}
 
-// Generate mock flight data for testing (keep this for fallback)
-const getMockFlights = (params) => {
-  console.log('Generating mock flights for', params);
-  
-  // Simulate API delay
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        data: generateMockFlights(params)
-      });
-    }, 1500);
-  });
-};
-
-// Generate realistic mock flight data
-const generateMockFlights = (params) => {
+// Add a mock data function
+const getMockFlightData = (searchParams) => {
+  // Simple mock data generator
   const mockFlights = [];
-  const airlines = [
-    { name: 'SkyJet Airways', code: 'SJ', logo: 'https://via.placeholder.com/80x40/0d6efd/FFFFFF?text=SJ' },
-    { name: 'Global Express', code: 'GE', logo: 'https://via.placeholder.com/80x40/dc3545/FFFFFF?text=GE' },
-    { name: 'Coastal Air', code: 'CA', logo: 'https://via.placeholder.com/80x40/198754/FFFFFF?text=CA' },
-    { name: 'Mountain Flights', code: 'MF', logo: 'https://via.placeholder.com/80x40/fd7e14/FFFFFF?text=MF' },
-    { name: 'Eagle Airlines', code: 'EA', logo: 'https://via.placeholder.com/80x40/6610f2/FFFFFF?text=EA' }
-  ];
+  const airlines = ['Delta', 'United', 'American', 'Southwest', 'JetBlue'];
+  const flightNumbers = ['DL123', 'UA456', 'AA789', 'WN012', 'B6345'];
   
-  // Create 5-10 mock flights
-  const flightCount = 5 + Math.floor(Math.random() * 6);
+  // Generate 5-10 flights
+  const numFlights = Math.floor(Math.random() * 5) + 5;
   
-  for (let i = 0; i < flightCount; i++) {
+  for (let i = 0; i < numFlights; i++) {
     const airline = airlines[i % airlines.length];
-    const basePrice = 200 + Math.floor(Math.random() * 400);
-    const connections = Math.random() > 0.7 ? 1 : 0; // 30% chance of having a connection
+    const flightNumber = flightNumbers[i % flightNumbers.length];
+    const basePrice = Math.floor(Math.random() * 300) + 100;
     
-    // Generate random departure time (between 6am and 8pm)
-    const departureHour = 6 + Math.floor(Math.random() * 14);
-    const departureMinute = Math.floor(Math.random() * 60);
-    
-    // Random flight duration (2-5 hours)
-    const durationMinutes = 120 + Math.floor(Math.random() * 180);
-    
-    // Calculate arrival time
-    const totalMinutes = departureHour * 60 + departureMinute + durationMinutes;
-    const arrivalHour = Math.floor(totalMinutes / 60) % 24;
-    const arrivalMinute = totalMinutes % 60;
-    
-    // Create flight object
-    const flight = {
-      id: `mock-${i}-${Date.now()}`,
-      owner: {
-        name: airline.name,
-        iata_code: airline.code,
-        logo_url: airline.logo
-      },
-      total_amount: (basePrice + (i * 15)).toFixed(2),
-      total_currency: 'USD',
+    mockFlights.push({
+      id: `mock-flight-${i}`,
       slices: [
         {
-          origin: { iata_code: params.slices[0].origin },
-          destination: { iata_code: params.slices[0].destination },
-          duration: durationMinutes,
-          segments: []
+          origin: {
+            iata_code: searchParams.origin || 'LAX',
+            name: 'Los Angeles International Airport'
+          },
+          destination: {
+            iata_code: searchParams.destination || 'JFK',
+            name: 'John F. Kennedy International Airport'
+          },
+          departure_date: searchParams.departure_date || '2025-05-15',
+          departure_time: '10:00',
+          arrival_time: '18:00',
+          duration_minutes: 360, // 6 hours
+          flight_number: flightNumber,
+          airline: {
+            name: airline,
+            iata_code: flightNumber.slice(0, 2)
+          }
         }
-      ]
-    };
-    
-    // Add segments (flights + connections)
-    if (connections === 0) {
-      // Direct flight
-      flight.slices[0].segments.push({
-        operating_carrier: {
-          name: airline.name,
-          iata_code: airline.code
-        },
-        departing_at: `${params.slices[0].departure_date}T${departureHour.toString().padStart(2, '0')}:${departureMinute.toString().padStart(2, '0')}:00`,
-        arriving_at: `${params.slices[0].departure_date}T${arrivalHour.toString().padStart(2, '0')}:${arrivalMinute.toString().padStart(2, '0')}:00`
-      });
-    } else {
-      // Flight with connection
-      // First segment (departure to connection)
-      const connectionDuration = Math.floor(durationMinutes * 0.6);
-      const connectionMinutes = departureHour * 60 + departureMinute + connectionDuration;
-      const connectionHour = Math.floor(connectionMinutes / 60) % 24;
-      const connectionMinute = connectionMinutes % 60;
-      
-      flight.slices[0].segments.push({
-        operating_carrier: {
-          name: airline.name,
-          iata_code: airline.code
-        },
-        departing_at: `${params.slices[0].departure_date}T${departureHour.toString().padStart(2, '0')}:${departureMinute.toString().padStart(2, '0')}:00`,
-        arriving_at: `${params.slices[0].departure_date}T${connectionHour.toString().padStart(2, '0')}:${connectionMinute.toString().padStart(2, '0')}:00`
-      });
-      
-      // Add connection time (1-2 hours)
-      const layoverDuration = 60 + Math.floor(Math.random() * 60);
-      const departureAfterConnection = connectionMinutes + layoverDuration;
-      const connectionDepartureHour = Math.floor(departureAfterConnection / 60) % 24;
-      const connectionDepartureMinute = departureAfterConnection % 60;
-      
-      // Second segment (connection to destination)
-      const remainingDuration = durationMinutes - connectionDuration;
-      const finalArrivalMinutes = departureAfterConnection + remainingDuration;
-      const finalArrivalHour = Math.floor(finalArrivalMinutes / 60) % 24;
-      const finalArrivalMinute = finalArrivalMinutes % 60;
-      
-      flight.slices[0].segments.push({
-        operating_carrier: {
-          name: airline.name,
-          iata_code: airline.code
-        },
-        departing_at: `${params.slices[0].departure_date}T${connectionDepartureHour.toString().padStart(2, '0')}:${connectionDepartureMinute.toString().padStart(2, '0')}:00`,
-        arriving_at: `${params.slices[0].departure_date}T${finalArrivalHour.toString().padStart(2, '0')}:${finalArrivalMinute.toString().padStart(2, '0')}:00`
-      });
-    }
-    
-    // Add return flight if roundtrip
-    if (params.slices.length > 1) {
-      // Return flight departure (between 6am and 8pm)
-      const returnDepartureHour = 6 + Math.floor(Math.random() * 14);
-      const returnDepartureMinute = Math.floor(Math.random() * 60);
-      
-      // Return flight duration (similar to outbound)
-      const returnDurationMinutes = durationMinutes - 30 + Math.floor(Math.random() * 60);
-      
-      // Calculate return arrival
-      const returnTotalMinutes = returnDepartureHour * 60 + returnDepartureMinute + returnDurationMinutes;
-      const returnArrivalHour = Math.floor(returnTotalMinutes / 60) % 24;
-      const returnArrivalMinute = returnTotalMinutes % 60;
-      
-      const returnSlice = {
-        origin: { iata_code: params.slices[1].origin },
-        destination: { iata_code: params.slices[1].destination },
-        duration: returnDurationMinutes,
-        segments: []
-      };
-      
-      // Add segments for return flight (same connection pattern as outbound)
-      if (connections === 0) {
-        // Direct return flight
-        returnSlice.segments.push({
-          operating_carrier: {
-            name: airline.name,
-            iata_code: airline.code
-          },
-          departing_at: `${params.slices[1].departure_date}T${returnDepartureHour.toString().padStart(2, '0')}:${returnDepartureMinute.toString().padStart(2, '0')}:00`,
-          arriving_at: `${params.slices[1].departure_date}T${returnArrivalHour.toString().padStart(2, '0')}:${returnArrivalMinute.toString().padStart(2, '0')}:00`
-        });
-      } else {
-        // Return flight with connection
-        const returnConnectionDuration = Math.floor(returnDurationMinutes * 0.6);
-        const returnConnectionMinutes = returnDepartureHour * 60 + returnDepartureMinute + returnConnectionDuration;
-        const returnConnectionHour = Math.floor(returnConnectionMinutes / 60) % 24;
-        const returnConnectionMinute = returnConnectionMinutes % 60;
-        
-        returnSlice.segments.push({
-          operating_carrier: {
-            name: airline.name,
-            iata_code: airline.code
-          },
-          departing_at: `${params.slices[1].departure_date}T${returnDepartureHour.toString().padStart(2, '0')}:${returnDepartureMinute.toString().padStart(2, '0')}:00`,
-          arriving_at: `${params.slices[1].departure_date}T${returnConnectionHour.toString().padStart(2, '0')}:${returnConnectionMinute.toString().padStart(2, '0')}:00`
-        });
-        
-        // Add connection time (1-2 hours)
-        const returnLayoverDuration = 60 + Math.floor(Math.random() * 60);
-        const returnDepartureAfterConnection = returnConnectionMinutes + returnLayoverDuration;
-        const returnConnectionDepartureHour = Math.floor(returnDepartureAfterConnection / 60) % 24;
-        const returnConnectionDepartureMinute = returnDepartureAfterConnection % 60;
-        
-        // Second segment (connection to destination)
-        const returnRemainingDuration = returnDurationMinutes - returnConnectionDuration;
-        const returnFinalArrivalMinutes = returnDepartureAfterConnection + returnRemainingDuration;
-        const returnFinalArrivalHour = Math.floor(returnFinalArrivalMinutes / 60) % 24;
-        const returnFinalArrivalMinute = returnFinalArrivalMinutes % 60;
-        
-        returnSlice.segments.push({
-          operating_carrier: {
-            name: airline.name,
-            iata_code: airline.code
-          },
-          departing_at: `${params.slices[1].departure_date}T${returnConnectionDepartureHour.toString().padStart(2, '0')}:${returnConnectionDepartureMinute.toString().padStart(2, '0')}:00`,
-          arriving_at: `${params.slices[1].departure_date}T${returnFinalArrivalHour.toString().padStart(2, '0')}:${returnFinalArrivalMinute.toString().padStart(2, '0')}:00`
-        });
-      }
-      
-      // Add return slice to flight
-      flight.slices.push(returnSlice);
-    }
-    
-    mockFlights.push(flight);
+      ],
+      price: {
+        amount: basePrice,
+        currency: 'USD'
+      },
+      total_amount: basePrice,
+      total_currency: 'USD'
+    });
   }
   
-  return mockFlights;
+  return { flights: mockFlights };
 };
+
+// Update the processFlightResults function
+
+function processFlightResults(flights) {
+  return flights.map(offer => {
+    // Extract slice and segment data
+    const firstSlice = offer.slices?.[0] || {};
+    const segments = firstSlice.segments || [];
+    const firstSegment = segments[0] || {};
+    
+    // Calculate total stops
+    const stops = segments.length - 1;
+    
+    // Format departure and arrival times
+    const departureTime = formatTime(firstSegment.departing_at || new Date().toISOString());
+    const arrivalTime = formatTime(firstSegment.arriving_at || new Date().toISOString());
+    
+    // Format duration
+    const durationMinutes = firstSlice.duration || 0;
+    const duration = formatDuration(durationMinutes);
+    
+    return {
+      id: offer.id,
+      airline: {
+        name: offer.owner?.name || 'Unknown Airline',
+        logo: `https://daisycon.io/images/airline/?width=100&height=50&color=ffffff&iata=${firstSegment.operating_carrier_iata_code || 'XX'}`
+      },
+      flightNumber: firstSegment.operating_carrier_flight_number || 'Unknown',
+      origin: firstSlice.origin?.iata_code || firstSegment.origin?.iata_code || 'Unknown',
+      destination: firstSlice.destination?.iata_code || firstSegment.destination?.iata_code || 'Unknown',
+      departureTime: departureTime,
+      arrivalTime: arrivalTime,
+      duration: duration,
+      stops: stops,
+      price: parseFloat(offer.total_amount || 0),
+      currency: offer.total_currency || 'USD',
+      cabinClass: firstSegment.cabin_class || 'economy',
+      seatsAvailable: 10
+    };
+  });
+}
+
+// Helper functions for formatting
+function formatTime(isoString) {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDuration(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours}h ${mins}m`;
+}
 
 export default {
   searchFlights

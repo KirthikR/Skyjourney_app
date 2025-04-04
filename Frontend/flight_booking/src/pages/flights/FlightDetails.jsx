@@ -90,22 +90,13 @@ const FlightDetails = () => {
   const handleContinue = () => {
     setLoading(true);
     
-    // Make sure we're sending the correct data structure
-    const passengerCount = searchParams?.passengers?.length || 1;
-    
+    // Log the navigation
     console.log("Navigating to passenger details with flight:", selectedFlight);
     
-    // Navigate to booking process with selected flight data
-    console.log('About to navigate to passenger details with data:', {
-      selectedOffer: selectedFlight,
-      searchParams: searchParams,
-      passengerCount: passengerCount
-    });
-    navigate('/booking/process', {
+    navigate('/booking/passengers', {
       state: {
-        selectedOffer: selectedFlight, // This key name is important for BookingProcess
-        searchParams: searchParams,
-        passengerCount: passengerCount
+        flight: selectedFlight,  // This key MUST be 'flight'
+        searchParams: searchParams
       }
     });
   };

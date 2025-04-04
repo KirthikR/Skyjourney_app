@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/FlightSearch.module.css';
+import posthog from 'posthog-js';
+import flightApi from '../../services/flightApi';
 
 export default function FlightSearch() {
   const navigate = useNavigate();
@@ -11,7 +13,7 @@ export default function FlightSearch() {
     departureDate: '',
     returnDate: '',
     passengers: {
-      adults: 1,
+      adults: 0,
       children: 0,
       infants: 0
     },
@@ -39,8 +41,17 @@ export default function FlightSearch() {
     }
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Track the search event
+    posthog.capture('flight_search', {
+      origin: searchParams.origin,
+      destination: searchParams.destination,
+      departDate: searchParams.departureDate,
+      passengers: searchParams.passengers,
+      timestamp: new Date().toISOString()
+    });
     
     // Prepare slices for the API
     const slices = [
@@ -79,8 +90,21 @@ export default function FlightSearch() {
       cabinClass: searchParams.cabinClass
     };
     
-    // Navigate to results page with search parameters
-    navigate('/flight-results', { state: { searchData } });
+    // Call the API
+    try {
+      // Try real API
+      const results = await flightApi.searchFlights(searchData);
+      navigate('/flight-results', { state: { searchData, results } });
+    } catch (error) {
+      console.error("API error:", error);
+      if (import.meta.env.DEV) {
+        console.log("Using test data in development");
+        const results = getTestFlightData(searchParams);
+        navigate('/flight-results', { state: { searchData, results } });
+      } else {
+        throw error;
+      }
+    }
   };
   
   return (
