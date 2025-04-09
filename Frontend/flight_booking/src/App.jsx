@@ -41,23 +41,70 @@ import { trackPageView } from './utils/analytics';
 import ConsentBanner from './components/ConsentBanner';
 import FlightDetailsPage from './pages/flights/FlightDetailsPage';
 import FlightResults from './pages/flights/FlightResults';
+import PostHogDebugger from './components/PostHogDebugger';
 
-// Create a RouteTracker component
-function RouteTracker() {
+// Optional: Route tracker component for PostHog
+const RouteTracker = () => {
   const location = useLocation();
   
   useEffect(() => {
-    trackPageView(location.pathname);
+    // Track page views
+    if (window.posthog) {
+      window.posthog.capture('$pageview');
+    }
   }, [location]);
   
   return null;
-}
+};
 
 function App() {
+  // Identify the user as early as possible
+  useEffect(() => {
+    // Use a persistent ID for the user (even if anonymous)
+    const userId = localStorage.getItem('user_id') || `anon_${Math.random().toString(36).substring(2, 15)}`;
+    
+    // Store for future sessions
+    if (!localStorage.getItem('user_id')) {
+      localStorage.setItem('user_id', userId);
+    }
+    
+    // Identify to PostHog
+    if (window.posthog) {
+      window.posthog.identify(userId, {
+        app_version: '1.0.0',
+        is_logged_in: Boolean(sessionStorage.getItem('authToken')),
+        // Add any other user properties that might be relevant for targeting
+      });
+      console.log('User identified to PostHog:', userId);
+    }
+  }, []);
+
+  // Generate a persistent ID for the user
+  useEffect(() => {
+    let userId = localStorage.getItem('posthog_user_id');
+    if (!userId) {
+      userId = `user_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('posthog_user_id', userId);
+    }
+    
+    // Identify the user to PostHog
+    if (window.posthog) {
+      window.posthog.identify(userId);
+      console.log('User identified to PostHog:', userId);
+      
+      // Force refresh feature flags
+      if (window.posthog.featureFlags && 
+          typeof window.posthog.featureFlags.reloadFeatureFlags === 'function') {
+        window.posthog.featureFlags.reloadFeatureFlags();
+        console.log('Feature flags reloaded');
+      }
+    }
+  }, []);
+
   return (
-    <>
-      <RouteTracker />
+    <div className="app-container">
       <Navbar />
+      <RouteTracker />
       <div className={styles.container}>
         <Routes>
           {/* Main Routes */}
@@ -102,8 +149,9 @@ function App() {
         </Routes>
       </div>
       <ConsentBanner />
+      {/* <PostHogDebugger /> */}
       {/* Removed DebugPanel here */}
-    </>
+    </div>
   );
 }
 

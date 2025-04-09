@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePostHog } from '../hooks/usePostHog';
+import useFeatureFlag from '../hooks/useFeatureFlag';
 import styles from "../styles/Home.module.css";
 import PopularDestinations from '../components/PopularDestinations';
 import TrendingDeals from '../components/TrendingDeals';
@@ -28,6 +29,20 @@ const Home = () => {
   const [showNewFeature, setShowNewFeature] = useState(false);
   const navigate = useNavigate();
   const { trackEvent } = usePostHog('home');
+
+  // Check for feature flags
+  const { enabled: showNewSearch } = useFeatureFlag('new-search-ui', false);
+  const { enabled: showEnhancedHero } = useFeatureFlag('enhanced-hero-section', false);
+  const { enabled: showAiRecommendations } = useFeatureFlag('ai-recommendations', false);
+  
+  // Log which features are active
+  useEffect(() => {
+    console.log('Feature flags active:', {
+      'new-search-ui': showNewSearch,
+      'enhanced-hero-section': showEnhancedHero,
+      'ai-recommendations': showAiRecommendations
+    });
+  }, [showNewSearch, showEnhancedHero, showAiRecommendations]);
 
   // Add this effect to send a test event when the page loads
   useEffect(() => {
@@ -161,31 +176,65 @@ const Home = () => {
 
   return (
     <div className={styles.homeContainer}>
-      <div 
-        className={styles.heroSection}
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroImages[currentImageIndex]})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transition: 'background-image 1s ease-in-out'
-        }}
-      >
-        <div className={styles.heroContent}>
-          <h1>Welcome to SkyJourney</h1>
-          <p>Your premium flight booking experience</p>
-          <Link 
-            to="/booking" 
-            className={styles.bookButton}
-            onClick={handleFindFlightsClick}
-          >
-            Find Flights
-          </Link>
+      {/* Use the enhanced hero section based on feature flag */}
+      {showEnhancedHero ? (
+        <div 
+          className={styles.enhancedHeroSection}
+          style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${heroImages[currentImageIndex]})`,
+          }}
+        >
+          <div className={styles.enhancedHeroContent}>
+            <h1>Discover Your Perfect Destination</h1>
+            <p>Personalized travel recommendations just for you</p>
+            <Link 
+              to="/booking" 
+              className={styles.enhancedCta}
+              onClick={handleFindFlightsClick}
+            >
+              Explore Flights
+            </Link>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div 
+          className={styles.heroSection}
+          style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroImages[currentImageIndex]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transition: 'background-image 1s ease-in-out'
+          }}
+        >
+          <div className={styles.heroContent}>
+            <h1>Welcome to SkyJourney</h1>
+            <p>Your premium flight booking experience</p>
+            <Link 
+              to="/booking" 
+              className={styles.bookButton}
+              onClick={handleFindFlightsClick}
+            >
+              Find Flights
+            </Link>
+          </div>
+        </div>
+      )}
 
       <TrendingDeals onDealClick={handleTrendingDealClick} />
       
-      <PopularDestinations />
+      {/* Use AI recommendations based on feature flag */}
+      {showAiRecommendations ? (
+        <div className={styles.aiRecommendationsSection}>
+          <h2>Personalized Destinations For You</h2>
+          <p>Based on your preferences and travel history</p>
+          {/* Your AI recommendations component */}
+          <div className={styles.recommendationsGrid}>
+            {/* AI-powered recommendations would go here */}
+          </div>
+        </div>
+      ) : (
+        <PopularDestinations />
+      )}
 
       {/* Hotel section has been removed as requested */}
 

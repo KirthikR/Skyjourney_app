@@ -16,6 +16,28 @@ const PostHogDebug = () => {
       setStatus('PostHog NOT AVAILABLE');
     }
 
+    // Check if PostHog is available
+    console.log('PostHog available:', typeof posthog !== 'undefined');
+    
+    // Check if PostHog is initialized
+    console.log('PostHog initialized:', posthog && typeof posthog.isFeatureEnabled === 'function');
+    
+    // Test a direct call
+    try {
+      const flags = posthog.getFeatureFlag('test-flag');
+      console.log('Feature flags loaded:', flags !== null);
+    } catch (error) {
+      console.error('Error accessing feature flags:', error);
+    }
+    
+    // Test event capture 
+    try {
+      posthog.capture('debug_event', { test: true });
+      console.log('Event captured successfully');
+    } catch (error) {
+      console.error('Error capturing event:', error);
+    }
+
     // Try to get current user ID
     try {
       const distinctId = posthog.get_distinct_id();
