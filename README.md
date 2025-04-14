@@ -161,4 +161,4 @@ This project is licensed under the **MIT License**. See [`LICENSE`](./LICENSE) f
 
 I'm a full-stack developer passionate about AI, UX, and data-driven applications. SkyJourney was built to demonstrate real-world architecture and cutting-edge tech in a travel context.
 
-Connect with me on LinkedIn:(https://www.linkedin.com/in/kirthik-r-3413a7233/) or explore more of my projects here: .
+Connect with me on LinkedIn:(https://www.linkedin.com/in/kirthik-r-3413a7233/) or explore more of my projects here: https://github.com/KirthikR 
