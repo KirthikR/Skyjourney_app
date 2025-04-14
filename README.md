@@ -1,8 +1,8 @@
 # ✈️ SkyJourney – AI-Powered Flight Booking Platform
 
-> **SkyJourney** is an intelligent flight booking platform built using modern web technologies and artificial intelligence, simulating a real-world travel booking experience. This is a **portfolio project** showcasing skills in full-stack architecture, AI integration, analytics, and user experience design.
+ **SkyJourney** is an intelligent flight booking platform built using modern web technologies and artificial intelligence, simulating a real-world travel booking experience. This is a **portfolio project** showcasing skills in full-stack architecture, AI integration, analytics, and user experience design.
 
-> 🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
+ 🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
 
 
 ## 📜 Table of Contents
@@ -161,4 +161,4 @@ This project is licensed under the **MIT License**. See [`LICENSE`](./LICENSE) f
 
 I'm a full-stack developer passionate about AI, UX, and data-driven applications. SkyJourney was built to demonstrate real-world architecture and cutting-edge tech in a travel context.
 
-> Connect with me on LinkedIn:(https://www.linkedin.com/in/kirthik-r-3413a7233/) or explore more of my projects here: .
+Connect with me on LinkedIn:(https://www.linkedin.com/in/kirthik-r-3413a7233/) or explore more of my projects here: .
