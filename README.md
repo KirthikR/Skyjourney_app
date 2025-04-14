@@ -139,7 +139,7 @@ User → UI → Context API → Services → External APIs → Response → UI
 
 bash
 # 1. Clone the repo
-git clone https://github.com/yourusername/skyjourney.git
+git clone https://github.com/KirthikR/Skyjourney_app)
 
 # 2. Install dependencies
 cd skyjourney
