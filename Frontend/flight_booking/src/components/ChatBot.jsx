@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaComment, FaPaperPlane, FaTimes, FaRobot, FaUser, FaSpinner, FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 import { sendMessage, getSuggestedQuestions } from '../services/chatbotService';
+import { useChatBot } from './ChatBot/ChatBotLogic';
 import styles from './ChatBot.module.css';
 
 const ChatBot = ({ userContext }) => {
@@ -141,65 +142,88 @@ const ChatBot = ({ userContext }) => {
     }
   }, [isOpen]);
 
-  const handleSendMessage = async (text = inputValue) => {
-    if (!text.trim()) return;
+  const handleSendMessage = async () => {
+    if (!inputValue.trim()) return;
     
-    // Use timestamp + random number for truly unique IDs
-    const uniqueId = Date.now() + Math.floor(Math.random() * 1000);
+    const userMessage = inputValue.trim();
+    setInputValue('');
     
-    // Add user message
-    const userMessage = {
-      id: uniqueId,
-      text: text,
+    // Add user message to chat immediately
+    const newMessage = {
+      id: Date.now(),
+      text: userMessage,
       sender: 'user',
       timestamp: new Date()
     };
     
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages(prevMessages => [...prevMessages, newMessage]);
     setIsTyping(true);
     
-    try {
-      // Gather context - current page, search parameters, selected flight if any
-      const pageContext = {
-        page: getCurrentPage(),
-        language: language,
-        ...userContext
-      };
-      
-      // Get response from chatbot service
-      const response = await sendMessage(text, pageContext);
-      
-      // Add bot response
-      const botMessage = {
-        id: Date.now() + Math.floor(Math.random() * 1000),
-        text: response.message,
+    // Add typing indicator
+    const typingIndicatorId = Date.now() + 1;
+    setMessages(prevMessages => [
+      ...prevMessages,
+      {
+        id: typingIndicatorId,
+        text: "Processing your request...",
         sender: 'bot',
         timestamp: new Date(),
-        links: response.links || [],
-        richContent: response.richContent || null
-      };
-      
-      setMessages(prev => [...prev, botMessage]);
-      
-      // Update suggestions if provided
-      if (response.suggestions) {
-        setSuggestedQuestions(response.suggestions);
+        isTyping: true
       }
-    } catch (error) {
-      // Add error message
-      const errorMessage = {
-        id: Date.now() + Math.floor(Math.random() * 1000),
-        text: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
-        sender: 'bot',
-        timestamp: new Date(),
-        isError: true
-      };
-      
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsTyping(false);
+    ]);
+    
+    let retries = 0;
+    const maxRetries = 2;
+    
+    while (retries <= maxRetries) {
+      try {
+        // Small delay to prevent rapid messages
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Call the API with current context
+        const result = await sendMessage(userMessage, {
+          page: location.pathname,
+          ...userContext
+        });
+        
+        // Remove typing indicator and add the real response
+        setMessages(prevMessages => [
+          ...prevMessages.filter(m => m.id !== typingIndicatorId),
+          {
+            id: Date.now() + 2,
+            text: result.message,
+            sender: 'bot',
+            timestamp: new Date(),
+            isError: result.isError
+          }
+        ]);
+        
+        // Success, exit retry loop
+        break;
+      } catch (error) {
+        console.error(`Error in chat (attempt ${retries + 1}/${maxRetries + 1}):`, error);
+        retries++;
+        
+        // If we've used all retries, show error message
+        if (retries > maxRetries) {
+          setMessages(prevMessages => [
+            ...prevMessages.filter(m => m.id !== typingIndicatorId),
+            {
+              id: Date.now() + 2,
+              text: "I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
+              sender: 'bot',
+              timestamp: new Date(),
+              isError: true
+            }
+          ]);
+        }
+        
+        // Wait longer between retries
+        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+      }
     }
+    
+    setIsTyping(false);
   };
 
   const handleSuggestionClick = (question) => {

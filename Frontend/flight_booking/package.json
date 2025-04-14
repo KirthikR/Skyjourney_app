@@ -17,6 +17,7 @@
     "express": "^4.21.2",
     "framer-motion": "^12.6.3",
     "morgan": "^1.10.0",
+    "openai": "^4.93.0",
     "package-name": "^0.1.0",
     "posthog-js": "^1.234.4",
     "react": "^18.2.0",
