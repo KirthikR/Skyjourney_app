@@ -4,7 +4,8 @@
 
  🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
  
-<img src="./skyjourney-visual.png">
+<img src="https://raw.githubusercontent.com/Kirthikr/Skyjourney_app/main/assets/skyjourney-visual.png" alt="SkyJourney – Visual" width="800"/>
+
 
 
 ## 📜 Table of Contents
