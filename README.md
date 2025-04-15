@@ -4,7 +4,7 @@
 
  🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
  
-![SkyJourney Visual](./assets/skyjourney-visual.svg)
+<img src="./assets/skyjourney-visual.svg" alt="SkyJourney Visual" width="600"/>
 
 
 ## 📜 Table of Contents
