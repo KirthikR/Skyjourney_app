@@ -4,9 +4,7 @@
 
  🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
  
-<img src="./assets/skyjourney-visual.png" alt="SkyJourney – AI-Powered Flight Booking Platform" width="800"/>
-
-
+<img src="./skyjourney-visual.png">
 
 
 ## 📜 Table of Contents
