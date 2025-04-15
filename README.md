@@ -4,7 +4,7 @@
 
  🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
  
-<img src="./assets/skyjourney-visual.svg" alt="SkyJourney Visual" width="600"/>
+<img src="file:///Users/kirthikramadoss/Downloads/SkyJourney%20%E2%80%93%20AI-Powered%20Flight%20Booking%20Platform%20-%20visual%20selection.svg" width="600"/>
 
 
 ## 📜 Table of Contents
