@@ -3,6 +3,8 @@
  **SkyJourney** is an intelligent flight booking platform built using modern web technologies and artificial intelligence, simulating a real-world travel booking experience. This is a **portfolio project** showcasing skills in full-stack architecture, AI integration, analytics, and user experience design.
 
  🔒 *Educational demo project only. Not affiliated with any commercial airline or travel service provider.*
+ 
+![SkyJourney Visual](./assets/skyjourney-visual.svg)
 
 
 ## 📜 Table of Contents
