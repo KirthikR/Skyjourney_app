@@ -148,7 +148,16 @@ const ChatBot = ({ userContext }) => {
     const userMessage = inputValue.trim();
     setInputValue('');
     
-    // Add user message to chat immediately
+    // Track this conversation with PostHog
+    try {
+      if (window.posthog) {
+        window.posthog.capture('chat_message_sent', { message_length: userMessage.length });
+      }
+    } catch (e) {
+      // Ignore analytics errors
+    }
+    
+    // Add user message to chat
     const newMessage = {
       id: Date.now(),
       text: userMessage,
@@ -165,62 +174,46 @@ const ChatBot = ({ userContext }) => {
       ...prevMessages,
       {
         id: typingIndicatorId,
-        text: "Processing your request...",
+        text: "...",
         sender: 'bot',
         timestamp: new Date(),
         isTyping: true
       }
     ]);
     
-    let retries = 0;
-    const maxRetries = 2;
-    
-    while (retries <= maxRetries) {
-      try {
-        // Small delay to prevent rapid messages
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Call the API with current context
-        const result = await sendMessage(userMessage, {
-          page: location.pathname,
-          ...userContext
-        });
-        
-        // Remove typing indicator and add the real response
-        setMessages(prevMessages => [
-          ...prevMessages.filter(m => m.id !== typingIndicatorId),
-          {
-            id: Date.now() + 2,
-            text: result.message,
-            sender: 'bot',
-            timestamp: new Date(),
-            isError: result.isError
-          }
-        ]);
-        
-        // Success, exit retry loop
-        break;
-      } catch (error) {
-        console.error(`Error in chat (attempt ${retries + 1}/${maxRetries + 1}):`, error);
-        retries++;
-        
-        // If we've used all retries, show error message
-        if (retries > maxRetries) {
-          setMessages(prevMessages => [
-            ...prevMessages.filter(m => m.id !== typingIndicatorId),
-            {
-              id: Date.now() + 2,
-              text: "I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
-              sender: 'bot',
-              timestamp: new Date(),
-              isError: true
-            }
-          ]);
+    try {
+      console.log('Sending message to chatbot service:', userMessage);
+      const result = await sendMessage(userMessage, {
+        page: location.pathname,
+        ...userContext
+      });
+      
+      console.log('Response received:', result);
+      
+      // Remove typing indicator and add the real response
+      setMessages(prevMessages => [
+        ...prevMessages.filter(m => m.id !== typingIndicatorId),
+        {
+          id: Date.now() + 2,
+          text: result.message,
+          sender: 'bot',
+          timestamp: new Date()
         }
-        
-        // Wait longer between retries
-        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
-      }
+      ]);
+    } catch (error) {
+      console.error('Error in chat:', error);
+      
+      // Remove typing indicator and show error message
+      setMessages(prevMessages => [
+        ...prevMessages.filter(m => m.id !== typingIndicatorId),
+        {
+          id: Date.now() + 2,
+          text: "I'm having trouble connecting right now. Please try again in a moment.",
+          sender: 'bot',
+          timestamp: new Date(),
+          isError: true
+        }
+      ]);
     }
     
     setIsTyping(false);

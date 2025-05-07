@@ -1,0 +1,18 @@
+[build]
+  base = "Frontend/flight_booking"
+  command = "npm run build"
+  publish = "dist"
+
+# Handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# API proxy for Duffel API
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.duffel.com/:splat"
+  status = 200
+  force = true
+  headers = {X-Forwarded-Host = "true"}
