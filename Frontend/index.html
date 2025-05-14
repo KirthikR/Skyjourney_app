@@ -1,75 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyJourney - Book Your Next Adventure</title>
   
-  <!-- POSTHOG SNIPPET - Make sure it's HERE, before any other scripts -->
+  <!-- Load environment variables before any other script -->
+  <script src="/env.js"></script>
+  
+  <!-- PostHog script -->
   <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetGroupPropertiesForFlags resetPersonPropertiesForFlags get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_kuNwiigDkKvSfjJKh5mkOSv6peRG38ChQarzZy1kMoA', {
-        api_host: 'https://eu.i.posthog.com',
-        person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
-        loaded: function(posthog) {
-            console.log('PostHog loaded successfully');
-        }
-    })
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_kuNwiigDkKvSfjJKh5mkOSv6peRG38ChQarzZy1kMoA', {api_host: 'https://eu.i.posthog.com'});
   </script>
-
-  <!-- Add this right after your existing PostHog script -->
+  
+  <!-- Safe error handling that doesn't rely on DOM elements that might not exist yet -->
   <script>
-    // Check if PostHog is available every second and log its status
-    window.checkPostHog = setInterval(function() {
-      if (window.posthog) {
-        console.log('✅ PostHog is available globally!');
-        clearInterval(window.checkPostHog);
-      } else {
-        console.log('⚠️ PostHog still not available...');
-      }
-    }, 1000);
-  </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log("Checking environment variables:");
-      
-      // Log first few characters of API key (safe to log)
-      const apiKey = import.meta.env.VITE_DUFFEL_API_KEY;
-      if (apiKey) {
-        console.log("API key is present, first few chars:", apiKey.substring(0, 5) + "...");
-      } else {
-        console.error("ERROR: API key is missing!");
-      }
-    });
-  </script>
-
-  <!-- Add this script for better error handling -->
-  <script type="text/javascript">
     window.onerror = function(message, source, lineno, colno, error) {
-      document.body.innerHTML = `
-        <div style="color: red; padding: 20px;">
-          <h2>Application Error</h2>
-          <p>${message}</p>
-          <p>Line: ${lineno}</p>
-          <p>Please check the console for more details.</p>
-        </div>
-      `;
-      console.error('Critical error:', message, error);
+      console.error('Application error:', message, source, lineno, colno);
+      
+      // Only try to show the error after the DOM has loaded
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        showErrorMessage(message);
+      } else {
+        window.addEventListener('DOMContentLoaded', function() {
+          showErrorMessage(message);
+        });
+      }
       return true;
     };
+    
+    function showErrorMessage(message) {
+      // Create error container if it doesn't exist
+      let errorContainer = document.getElementById('error-container');
+      if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'error-container';
+        errorContainer.style.color = 'red';
+        errorContainer.style.padding = '20px';
+        errorContainer.style.margin = '20px';
+        errorContainer.style.border = '1px solid red';
+        document.body.appendChild(errorContainer);
+      }
+      
+      errorContainer.innerHTML = `
+        <h2>Application Error</h2>
+        <p>${message}</p>
+        <p>Please try refreshing the page.</p>
+      `;
+    }
   </script>
-
-  <!-- Google Tag Manager -->
-  <script src="/gtm.js"></script>
-  <!-- Other head elements -->
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXX"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  
   <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

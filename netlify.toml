@@ -3,30 +3,20 @@
   command = "npm run build"
   publish = "dist"
 
-# Handle public files
-[[headers]]
-  for = "/favicon.ico"
-  [headers.values]
-    Cache-Control = "public, max-age=86400"
-
-# Handle SPA routing with React Router
+# Proper SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Add appropriate headers
+# Cache static assets
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Enable Netlify dev for local testing
-[dev]
-  command = "npm run dev"
-  port = 5173
-  publish = "dist"
-
-# Add build environment variable to distinguish production
-[context.production.environment]
-  VITE_APP_ENV = "production"
+# Cache favicon
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
