@@ -44,6 +44,22 @@
     });
   </script>
 
+  <!-- Add this script for better error handling -->
+  <script type="text/javascript">
+    window.onerror = function(message, source, lineno, colno, error) {
+      document.body.innerHTML = `
+        <div style="color: red; padding: 20px;">
+          <h2>Application Error</h2>
+          <p>${message}</p>
+          <p>Line: ${lineno}</p>
+          <p>Please check the console for more details.</p>
+        </div>
+      `;
+      console.error('Critical error:', message, error);
+      return true;
+    };
+  </script>
+
   <!-- Google Tag Manager -->
   <script src="/gtm.js"></script>
   <!-- Other head elements -->

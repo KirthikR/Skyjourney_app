@@ -9,10 +9,12 @@
   to = "/index.html"
   status = 200
 
-# Proxy API requests if needed
-[[redirects]]
-  from = "/api/*"
-  to = "https://api.duffel.com/:splat"
-  status = 200
-  force = true
-  headers = {X-Forwarded-Host = "true"}
+# Enable Netlify dev for local testing
+[dev]
+  command = "npm run dev"
+  port = 5173
+  publish = "dist"
+
+# Add build environment variable to distinguish production
+[context.production.environment]
+  VITE_APP_ENV = "production"
