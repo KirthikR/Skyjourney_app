@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { ENV } from '../config/env';
 
 // Cache for responses to reduce API calls
 const RESPONSE_CACHE = new Map();
@@ -29,7 +30,7 @@ try {
 // Initialize OpenAI client
 let openai = null;
 try {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  const apiKey = ENV.OPENAI_API_KEY;
   if (apiKey) {
     openai = new OpenAI({
       apiKey,
