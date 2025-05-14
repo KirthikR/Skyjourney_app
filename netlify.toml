@@ -1,15 +1,15 @@
 [build]
-  base = "Frontend/flight_booking"
+  base = "Frontend"
   command = "npm run build"
   publish = "dist"
 
-# Handle SPA routing
+# Handle SPA routing with React Router
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# API proxy for Duffel API
+# Proxy API requests if needed
 [[redirects]]
   from = "/api/*"
   to = "https://api.duffel.com/:splat"
