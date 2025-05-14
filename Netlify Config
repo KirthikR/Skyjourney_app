@@ -1,0 +1,27 @@
+# Create this file: /Users/kirthikramadoss/Documents/flight_app/netlify.toml
+[build]
+  base = "Frontend/flight_booking"
+  command = "npm run build"
+  publish = "dist"
+
+# Handle SPA routing with React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Proxy API requests if needed
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.duffel.com/:splat"
+  status = 200
+  force = true
+  headers = {X-Forwarded-Host = "true"}
+
+# Add security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Content-Security-Policy = "default-src 'self' https://api.openai.com https://eu.i.posthog.com; script-src 'self' 'unsafe-inline' https://eu.i.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.openai.com https://eu.i.posthog.com;"

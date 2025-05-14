@@ -13,7 +13,14 @@ export default defineConfig({
       }
     }
   },
-  // Fix for URI malformed errors
+  build: {
+    rollupOptions: {
+      // Ensure there are no empty chunks
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
   publicDir: './public',
   resolve: {
     alias: {
