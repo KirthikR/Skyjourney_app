@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/postbuild.js",
+    "build": "vite build && node scripts/postbuild.cjs",
     "preview": "vite preview",
     "prebuild": "echo 'Skipping lint checks for deployment'",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
